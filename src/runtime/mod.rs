@@ -1,5 +1,5 @@
 mod executors;
-use self::executors::{add, div, mul, print, sub};
+use self::executors::{add, div, mul, print, print_debug, sub};
 use crate::{ast::operand_extracts::*, ast::ValueType, Stack};
 
 pub fn run(stack: Vec<crate::Stack>) {
@@ -20,6 +20,7 @@ fn execute_operation(stack: &mut Vec<ValueType>, operator: &str) {
         MUL => mul(stack),
         DIV => div(stack),
         PRINT => print(stack),
+        PRINT_DEBUG => print_debug(stack),
         _ => (),
     }
 }
