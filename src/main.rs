@@ -1,7 +1,10 @@
-pub use ast::ValueType;
-
 mod ast;
 mod runtime;
+mod util;
+
+use std::time::Instant;
+
+pub use ast::ValueType;
 
 #[derive(Debug, PartialEq)]
 pub enum Stack<'a> {
@@ -10,20 +13,21 @@ pub enum Stack<'a> {
 }
 
 fn main() {
-    #[cfg(debug_assertions)]
-    run("-125 2525 + print".to_string());
+    let now = Instant::now();
+    let src = util::extract_src();
+    println!("Getting src from file took: {:?}", now.elapsed());
 
-    #[cfg(not(debug_assertions))]
-    {
-        extract_path();
-        extract_src();
-        run();
-    }
+    run(src);
 }
 
 fn run(src: String) {
     let mut stack = Vec::new();
 
+    let now = Instant::now();
     ast::fill_ast(&src, &mut stack);
+    println!("Filling the ast took {:?}", now.elapsed());
+
+    let now = Instant::now();
     runtime::run(stack);
+    println!("Executing from ast took: {:?}", now.elapsed());
 }
