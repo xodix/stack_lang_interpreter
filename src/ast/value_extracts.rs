@@ -1,5 +1,5 @@
-use std::error::Error;
 use crate::Stack;
+use std::error::Error;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ValueType {
@@ -26,7 +26,7 @@ pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 
     *i += index;
 
-    fn panic_function(e: Box<dyn Error>, i: usize) {
+    fn extract_panic(e: Box<dyn Error>, i: usize) {
         panic!("Could not extract number on character {}, {e}", i);
     }
 
@@ -35,14 +35,14 @@ pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 
         match res {
             Ok(num) => stack.push(Stack::Value(ValueType::Float(num))),
-            Err(e) => panic_function(Box::new(e), *i),
+            Err(e) => extract_panic(Box::new(e), *i),
         }
     } else {
         let res = num.parse::<i32>();
 
         match res {
             Ok(num) => stack.push(Stack::Value(ValueType::Int(num))),
-            Err(e) => panic_function(Box::new(e), *i),
+            Err(e) => extract_panic(Box::new(e), *i),
         }
     }
 }

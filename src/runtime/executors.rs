@@ -19,6 +19,23 @@ fn mismatched_args<T: Debug>(expected: &str, given: T) {
     panic!("Expected {}, but got {:?}", expected, given);
 }
 
+/**
+A size fits all solution for normalization of number types and common math operations.
+
+Example:
+```
+    use crate::ValueType::*;
+
+    let mut vec = vec![Int(1),Int(2)];
+    execute_common_math(&mut vec, "+");
+
+    assert_eq!(vec, vec![Int(3)]);
+```
+
+Checks for:
+- Sufficient argument amount.
+- Valid types.
+ */
 fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
     check_argument_count(2, stack);
 
@@ -28,14 +45,14 @@ fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
     match arg1 {
         Int(n1) => {
             if let ValueType::Int(n2) = arg2 {
-                stack.push(Int(calculate(oper, n1, n2)));
+                stack.push(Int(calculate_oper(oper, n1, n2)));
             } else {
                 mismatched_args("Int", arg2);
             }
         }
         Float(n1) => {
             if let ValueType::Float(n2) = arg2 {
-                stack.push(Float(calculate(oper, n1, n2)));
+                stack.push(Float(calculate_oper(oper, n1, n2)));
             } else {
                 mismatched_args("Float", arg2);
             }
@@ -44,7 +61,7 @@ fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
     }
 }
 
-fn calculate<T>(oper: &str, n1: T, n2: T) -> T
+fn calculate_oper<T>(oper: &str, n1: T, n2: T) -> T
 where
     T: Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T>,
 {
