@@ -2,9 +2,8 @@ mod ast;
 mod runtime;
 mod util;
 
-use std::time::Instant;
-
 pub use ast::ValueType;
+use std::time::Instant;
 
 #[derive(Debug, PartialEq)]
 pub enum Stack<'a> {

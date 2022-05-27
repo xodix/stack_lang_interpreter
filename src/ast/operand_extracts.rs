@@ -6,9 +6,10 @@ pub const MUL: &str = "*";
 pub const DIV: &str = "/";
 pub const MOD: &str = "%";
 pub const PRINT: &str = "print";
+pub const PRINT_DEBUG: &str = "print_debug";
 
 pub fn extract_operand<'a>(str: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
-    const OPERANDS: [&str; 6] = [ADD, SUB, MUL, DIV, MOD, PRINT];
+    const OPERANDS: [&str; 7] = [ADD, SUB, MUL, DIV, MOD, PRINT, PRINT_DEBUG];
 
     let presumable_operand_index = str.find(' ').unwrap_or(str.len());
     *i += presumable_operand_index;

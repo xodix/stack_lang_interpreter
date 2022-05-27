@@ -1,11 +1,23 @@
 use crate::Stack;
-use std::error::Error;
+use std::{error::Error, fmt::Display};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ValueType {
     Int(i32),
     Float(f32),
     Text(String),
+}
+
+impl Display for ValueType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Int(int) => write!(f, "{}", int)?,
+            Self::Float(float) => write!(f, "{}", float)?,
+            Self::Text(text) => write!(f, "{}", text)?,
+        };
+
+        Ok(())
+    }
 }
 
 pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
@@ -56,5 +68,5 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 
     stack.push(Stack::Value(ValueType::Text(word)));
 
-    *i += word_end;
+    *i += word_end + 1;
 }

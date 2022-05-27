@@ -98,5 +98,12 @@ pub fn print(stack: &mut Vec<ValueType>) {
     check_argument_count(1, stack);
 
     let arg1 = stack.pop().unwrap();
-    println!("{:?}", arg1);
+    println!("{}", arg1);
+}
+
+pub fn print_debug(stack: &mut Vec<ValueType>) {
+    check_argument_count(1, stack);
+
+    let arg1 = stack.pop().unwrap();
+    println!("{:?} is {} element in the stack", arg1, stack.len())
 }
