@@ -12,21 +12,14 @@ pub enum Stack<'a> {
 }
 
 fn main() {
-    let now = Instant::now();
-    let src = util::extract_src();
-    println!("Getting src from file took: {:?}", now.elapsed());
+    let src = log_debug_time!("Getting src from file", util::extract_src());
 
-    run(src);
+    run(src.to_string());
 }
 
 fn run(src: String) {
     let mut stack = Vec::new();
 
-    let now = Instant::now();
-    ast::fill_ast(&src, &mut stack);
-    println!("Filling the ast took {:?}", now.elapsed());
-
-    let now = Instant::now();
-    runtime::run(stack);
-    println!("Executing from ast took: {:?}", now.elapsed());
+    log_debug_time!(ast::fill_ast(&src, &mut stack), "Parsing src");
+    log_debug_time!(runtime::run(stack), "Executing from ast");
 }
