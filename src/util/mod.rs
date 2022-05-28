@@ -25,6 +25,8 @@ Macro returns the value of expression.
 macro_rules! log_debug_time {
     ( $function:expr, $what:expr ) => {
         if cfg!(debug_assertions) {
+            use std::time::Instant;
+
             let now = Instant::now();
             let result = $function;
             println!("{} took {:?}", $what, now.elapsed());

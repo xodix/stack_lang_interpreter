@@ -3,7 +3,6 @@ mod runtime;
 mod util;
 
 pub use ast::ValueType;
-use std::time::Instant;
 
 #[derive(Debug, PartialEq)]
 pub enum Stack<'a> {
