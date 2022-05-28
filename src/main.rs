@@ -12,7 +12,7 @@ pub enum Stack<'a> {
 }
 
 fn main() {
-    let src = log_debug_time!("Getting src from file", util::extract_src());
+    let src = log_debug_time!(util::extract_src(), "Getting src from file");
 
     run(src.to_string());
 }
