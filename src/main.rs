@@ -10,6 +10,7 @@ pub enum Stack<'a> {
     Operation(&'a str),
 }
 
+// test
 fn main() {
     let src = log_debug_time!(util::extract_src(), "Getting src from file");
 
