@@ -7,14 +7,14 @@ pub fn run(stack: Vec<crate::Stack>) {
 
     for elem in stack.into_iter() {
         match elem {
-            Stack::Operation(oper) => execute_operation(&mut value_stack, oper),
+            Stack::Operation(operation) => execute_operation(&mut value_stack, operation),
             Stack::Value(val) => value_stack.push(val),
         }
     }
 }
 
-fn execute_operation(stack: &mut Vec<ValueType>, operator: &str) {
-    match operator {
+fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
+    match operation {
         ADD => add(stack),
         SUB => sub(stack),
         MUL => mul(stack),

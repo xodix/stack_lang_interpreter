@@ -8,15 +8,20 @@ use std::{
 };
 
 #[inline]
-fn check_argument_count(count: usize, stack: &Vec<ValueType>) {
+fn check_argument_count(stack: &Vec<ValueType>, count: usize) {
     if stack.len() < count {
-        panic!("Expected {} arguments, got {}", count, stack.len());
+        panic!(
+            "Expected {} arguments, got {};\nStack values: {:?}",
+            count,
+            stack.len(),
+            stack
+        );
     }
 }
 
 #[inline]
-fn mismatched_args<T: Debug>(expected: &str, given: T) {
-    panic!("Expected {}, but got {:?}", expected, given);
+fn mismatched_args<T: Debug>(expected: &str, got: T) {
+    panic!("Expected {}, but got {:?}", expected, got);
 }
 
 /**
@@ -36,8 +41,8 @@ Checks for:
 - Sufficient argument amount.
 - Valid types.
  */
-fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
-    check_argument_count(2, stack);
+fn execute_common_math(stack: &mut Vec<ValueType>, operation: &str) {
+    check_argument_count(stack, 2);
 
     let arg1 = stack.pop().unwrap();
     let arg2 = stack.pop().unwrap();
@@ -45,14 +50,14 @@ fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
     match arg1 {
         Int(n1) => {
             if let ValueType::Int(n2) = arg2 {
-                stack.push(Int(calculate_oper(oper, n1, n2)));
+                stack.push(Int(calculate_operation(operation, n1, n2)));
             } else {
                 mismatched_args("Int", arg2);
             }
         }
         Float(n1) => {
             if let ValueType::Float(n2) = arg2 {
-                stack.push(Float(calculate_oper(oper, n1, n2)));
+                stack.push(Float(calculate_operation(operation, n1, n2)));
             } else {
                 mismatched_args("Float", arg2);
             }
@@ -61,18 +66,21 @@ fn execute_common_math(stack: &mut Vec<ValueType>, oper: &str) {
     }
 }
 
-fn calculate_oper<T>(oper: &str, n1: T, n2: T) -> T
+fn calculate_operation<T>(operation: &str, n1: T, n2: T) -> T
 where
     T: Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T>,
 {
-    return match oper {
+    return match operation {
         ADD => n1 + n2,
         SUB => n1 - n2,
         MUL => n1 * n2,
         DIV => n1 / n2,
-        _ => panic!("{}: not a valid operand!", oper),
+        _ => panic!("{}: not a valid operand!", operation),
     };
 }
+
+// Inlined functions below could be a part of match statement in execute_operation.
+// However they are kept to give the project structure (every operand has a corresponding function).
 
 #[inline]
 pub fn add(stack: &mut Vec<ValueType>) {
@@ -95,15 +103,15 @@ pub fn div(stack: &mut Vec<ValueType>) {
 }
 
 pub fn print(stack: &mut Vec<ValueType>) {
-    check_argument_count(1, stack);
+    check_argument_count(stack, 1);
 
     let arg1 = stack.pop().unwrap();
     println!("{}", arg1);
 }
 
 pub fn print_debug(stack: &mut Vec<ValueType>) {
-    check_argument_count(1, stack);
+    check_argument_count(stack, 1);
 
-    let arg1 = stack.pop().unwrap();
+    let arg1 = &stack[stack.len() - 1];
     println!("{:?} is {} element in the stack", arg1, stack.len())
 }
