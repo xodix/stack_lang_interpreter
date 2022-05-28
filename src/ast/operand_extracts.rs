@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::Stack;
 
 pub const ADD: &str = "+";
@@ -8,14 +10,14 @@ pub const MOD: &str = "%";
 pub const PRINT: &str = "print";
 pub const PRINT_DEBUG: &str = "print_debug";
 
-pub fn extract_operand<'a>(str: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
-    const OPERANDS: [&str; 7] = [ADD, SUB, MUL, DIV, MOD, PRINT, PRINT_DEBUG];
+pub fn extract_operand<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
+    let operands = HashSet::from([ADD, SUB, MUL, DIV, MOD, PRINT, PRINT_DEBUG]);
 
-    let presumable_operand_index = str.find(' ').unwrap_or(str.len());
+    let presumable_operand_index = src.find(' ').unwrap_or(src.len());
     *i += presumable_operand_index;
-    let presumable_operand = &str[..presumable_operand_index];
+    let presumable_operand = &src[..presumable_operand_index];
 
-    if OPERANDS.contains(&presumable_operand) {
+    if operands.contains(&presumable_operand) {
         stack.push(Stack::Operation(presumable_operand));
     } else {
         if presumable_operand != "" {
