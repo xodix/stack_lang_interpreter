@@ -1,5 +1,5 @@
 use crate::{
-    ast::operand_extracts::{ADD, DIV, MUL, SUB},
+    ast::operation_extracts::{ADD, DIV, MUL, SUB},
     ValueType::{self, *},
 };
 use std::{
@@ -68,19 +68,19 @@ fn execute_common_math(stack: &mut Vec<ValueType>, operation: &str) {
 
 fn calculate_operation<T>(operation: &str, n1: T, n2: T) -> T
 where
-    T: Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T>,
+    T: Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Default + PartialEq,
 {
     return match operation {
         ADD => n1 + n2,
         SUB => n1 - n2,
         MUL => n1 * n2,
         DIV => n1 / n2,
-        _ => panic!("{}: not a valid operand!", operation),
+        _ => panic!("{}: not a valid operation!", operation),
     };
 }
 
 // Inlined functions below could be a part of match statement in execute_operation.
-// However they are kept to give the project structure (every operand has a corresponding function).
+// However they are kept to give the project structure (every operation has a corresponding function).
 
 #[inline]
 pub fn add(stack: &mut Vec<ValueType>) {

@@ -1,6 +1,10 @@
+#[cfg(test)]
+mod runtime_test;
+
 mod executors;
+
 use self::executors::{add, div, mul, print, print_debug, sub};
-use crate::{ast::operand_extracts::*, ast::ValueType, Stack};
+use crate::{ast::operation_extracts::*, ast::ValueType, Stack};
 
 pub fn run(stack: Vec<crate::Stack>) {
     let mut value_stack: Vec<ValueType> = Vec::new();

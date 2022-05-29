@@ -1,4 +1,7 @@
-pub mod operand_extracts;
+#[cfg(test)]
+mod ast_test;
+
+pub mod operation_extracts;
 pub mod value_extracts;
 
 pub use self::value_extracts::extract_string;
@@ -6,7 +9,7 @@ use crate::Stack;
 pub use value_extracts::extract_num;
 pub use value_extracts::ValueType;
 
-use self::operand_extracts::extract_operand;
+use self::operation_extracts::extract_operation;
 
 pub fn fill_ast<'a>(src: &'a String, stack: &mut Vec<Stack<'a>>) {
     let chars: Vec<char> = src.chars().collect();
@@ -26,7 +29,7 @@ pub fn fill_ast<'a>(src: &'a String, stack: &mut Vec<Stack<'a>>) {
 
             ' ' => (),
 
-            _ => extract_operand(&src[i..], stack, &mut i),
+            _ => extract_operation(&src[i..], stack, &mut i),
         };
 
         i += 1;
