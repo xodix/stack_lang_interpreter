@@ -7,11 +7,12 @@ pub const SUB: &str = "-";
 pub const MUL: &str = "*";
 pub const DIV: &str = "/";
 pub const MOD: &str = "%";
+pub const POW: &str = "^";
 pub const PRINT: &str = "print";
 pub const PRINT_DEBUG: &str = "print_debug";
 
 pub fn extract_operation<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
-    let operands = HashSet::from([ADD, SUB, MUL, DIV, MOD, PRINT, PRINT_DEBUG]);
+    let operands = HashSet::from([ADD, SUB, MUL, DIV, MOD, POW, PRINT, PRINT_DEBUG]);
 
     let presumable_operand_index = src.find(' ').unwrap_or(src.len());
     *i += presumable_operand_index;

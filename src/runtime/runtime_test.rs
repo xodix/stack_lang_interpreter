@@ -51,6 +51,22 @@ fn test_execute_mul_mixed_types() {
 }
 
 #[test]
+fn test_execute_pow() {
+    let mut stack = vec![ValueType::Int(3), ValueType::Int(2)];
+    execute_operation(&mut stack, POW);
+
+    assert_eq!(ValueType::Int(8), stack[0]);
+}
+
+#[test]
+fn test_execute_mod() {
+    let mut stack = vec![ValueType::Int(2), ValueType::Int(3)];
+    execute_operation(&mut stack, MOD);
+
+    assert_eq!(ValueType::Int(1), stack[0]);
+}
+
+#[test]
 fn test_execute_print() {
     let mut stack = vec![ValueType::Text("Hell'o, World!".to_string())];
     execute_operation(&mut stack, PRINT);
