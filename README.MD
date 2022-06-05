@@ -19,25 +19,44 @@ Creating your own programming language helps with rapidly learning others.
 
 # How to run
 
+## Download:
+
+You can use the binary file by downloading it from: <PATH_TO_RELEASE>
+
+## OR
+
+## Compile
+
 You will need:
 
 1. [cargo + rustc](https://www.rust-lang.org/tools/install)
 2. Visual Studio C++ Build tools / GCC
 
-First clone and enter the repository:
+First clone and enter the repository from the console:
 
 ```sh
 git clone "https://github.com/xodix/stack_lang_compiler.git"
-cd stack_lang_compiler
+
+cd stack_lang_compile
 ```
 
-Then enter:
+## Running
+
+### When using released binary:
+
+```sh
+./stack_lang_compiler test.sl
+```
+
+'test.sl' can be replaced with path to a different file.
+
+### When using source code enter:
 
 ```sh
 cargo run --release test.sl
 ```
 
-'test.sl' can be replaced with other files.
+'test.sl' can be replaced with path to a different file
 
 # Examples:
 
@@ -56,9 +75,9 @@ Prints Int(9) to standard output because 1 + 2 = 3 and 3 \* 3 = 9.
 The same operation can be written as:
 
 ```
-3 2 1 + *
+3 1 2 + *
 ```
 
 How?
 
-The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two last elements** adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed
+The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two last elements** and adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed
