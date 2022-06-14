@@ -4,13 +4,12 @@ mod util;
 
 pub use ast::ValueType;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Stack<'a> {
-    Value(ValueType),
+    Value(ValueType<'a>),
     Operation(&'a str),
 }
 
-// test
 fn main() {
     let src = log_debug_time!(util::extract_src(), "Getting src from file");
 

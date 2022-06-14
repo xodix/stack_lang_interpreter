@@ -4,6 +4,7 @@ mod ast_test;
 pub mod operation_extracts;
 pub mod value_extracts;
 
+use self::value_extracts::extract_scope;
 pub use self::value_extracts::extract_string;
 use crate::Stack;
 pub use value_extracts::extract_num;
@@ -11,7 +12,7 @@ pub use value_extracts::ValueType;
 
 use self::operation_extracts::extract_operation;
 
-pub fn fill_ast<'a>(src: &'a String, stack: &mut Vec<Stack<'a>>) {
+pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
     let chars: Vec<char> = src.chars().collect();
     let mut i = 0;
 
@@ -26,6 +27,11 @@ pub fn fill_ast<'a>(src: &'a String, stack: &mut Vec<Stack<'a>>) {
             }
 
             '\'' | '\"' => extract_string(&src[i..], stack, &mut i),
+
+            '{' => stack.push(Stack::Value(ValueType::Scope(extract_scope(
+                &src[i..],
+                &mut i,
+            )))),
 
             ' ' => (),
 

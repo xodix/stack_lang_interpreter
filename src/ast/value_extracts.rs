@@ -1,19 +1,29 @@
 use crate::Stack;
 use std::{error::Error, fmt::Display};
 
+use super::fill_ast;
+
 #[derive(Debug, Clone, PartialEq)]
-pub enum ValueType {
+pub enum ValueType<'a> {
     Int(i32),
     Float(f32),
     Text(String),
+    Scope(Vec<Stack<'a>>),
 }
 
-impl Display for ValueType {
+impl Display for ValueType<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Int(int) => write!(f, "{}", int)?,
             Self::Float(float) => write!(f, "{}", float)?,
             Self::Text(text) => write!(f, "{}", text)?,
+            Self::Scope(scope) => {
+                write!(f, "{{\n")?;
+                for elem in scope {
+                    write!(f, "\t{:?}\n", elem)?;
+                }
+                write!(f, "}}\n")?;
+            }
         };
 
         Ok(())
@@ -69,4 +79,18 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     stack.push(Stack::Value(ValueType::Text(word)));
 
     *i += word_end + 1;
+}
+
+pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
+    let scope_end = src.find('}').expect(&format!(
+        "Could not find end of scope started at {i} character."
+    ));
+
+    let mut scopes_stack: Vec<Stack> = Vec::new();
+    // ! Cloning occurs here.
+    fill_ast(&src[1..(scope_end - 1)], &mut scopes_stack);
+
+    *i += scope_end + 1;
+
+    scopes_stack
 }
