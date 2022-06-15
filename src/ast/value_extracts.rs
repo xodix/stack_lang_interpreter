@@ -9,6 +9,19 @@ pub enum ValueType<'a> {
     Float(f32),
     Text(String),
     Scope(Vec<Stack<'a>>),
+    Bool(bool),
+}
+
+impl<'a> ValueType<'a> {
+    pub fn truthy(&self) -> bool {
+        match self {
+            ValueType::Int(number) => *number != 0,
+            ValueType::Float(number) => *number != 0.0,
+            ValueType::Text(text) => text.len() != 0,
+            ValueType::Scope(scope) => scope.len() != 0,
+            ValueType::Bool(condition) => *condition,
+        }
+    }
 }
 
 impl Display for ValueType<'_> {
@@ -24,6 +37,7 @@ impl Display for ValueType<'_> {
                 }
                 write!(f, "}}\n")?;
             }
+            Self::Bool(condition) => write!(f, "{}", if *condition { "true" } else { "false" })?,
         };
 
         Ok(())
@@ -88,7 +102,7 @@ pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
     // ! Cloning occurs here.
-    fill_ast(&src[1..(scope_end - 1)], &mut scopes_stack);
+    fill_ast(&src[1..scope_end], &mut scopes_stack);
 
     *i += scope_end + 1;
 
