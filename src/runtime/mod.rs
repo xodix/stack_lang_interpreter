@@ -3,7 +3,7 @@ mod runtime_test;
 
 mod executors;
 
-use self::executors::{add, div, if_statement, modulo, mul, pow, print, print_debug, sub};
+use self::executors::*;
 use crate::{ast::operation_extracts::*, ast::ValueType, Stack};
 
 pub fn run<'a>(stack: Vec<Stack<'a>>, value_stack: &mut Vec<ValueType<'a>>) {
@@ -21,11 +21,22 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
         SUB => sub(stack),
         MUL => mul(stack),
         DIV => div(stack),
-        POW => pow(stack),
         MOD => modulo(stack),
+        POW => pow(stack),
+
+        LT => lt(stack),
+        GT => gt(stack),
+        EQ => eq(stack),
+        LEQ => leq(stack),
+        GEQ => geq(stack),
+
+        OR => or(stack),
+        AND => and(stack),
+
+        IF => if_statement(stack),
+
         PRINT => print(stack),
         PRINT_DEBUG => print_debug(stack),
-        IF => if_statement(stack),
         _ => (),
     }
 }

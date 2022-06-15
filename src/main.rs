@@ -23,5 +23,6 @@ fn run(src: String) {
     log_debug_time!(ast::fill_ast(&src, &mut stack), "Parsing src");
     log_debug_time!(runtime::run(stack, &mut value_stack), "Executing from ast");
 
+    #[cfg(debug_assertions)]
     println!("{:?}", value_stack);
 }

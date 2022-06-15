@@ -9,13 +9,40 @@ pub const MUL: &str = "*";
 pub const DIV: &str = "/";
 pub const MOD: &str = "%";
 pub const POW: &str = "^";
-pub const PRINT: &str = "print";
-pub const PRINT_DEBUG: &str = "print_debug";
+
+pub const LT: &str = "<";
+pub const GT: &str = ">";
+pub const EQ: &str = "==";
+pub const LEQ: &str = "<=";
+pub const GEQ: &str = ">=";
+
+pub const OR: &str = "||";
+pub const AND: &str = "&&";
+
 pub const IF: &str = "if";
 
+pub const PRINT: &str = "print";
+pub const PRINT_DEBUG: &str = "print_debug";
+
 lazy_static! {
-    static ref OPERANDS: HashSet<&'static str> =
-        HashSet::from([ADD, SUB, MUL, DIV, MOD, POW, PRINT, PRINT_DEBUG, IF]);
+    static ref OPERANDS: HashSet<&'static str> = HashSet::from([
+        ADD,
+        SUB,
+        MUL,
+        DIV,
+        MOD,
+        POW,
+        PRINT,
+        PRINT_DEBUG,
+        IF,
+        LT,
+        GT,
+        EQ,
+        LEQ,
+        GEQ,
+        OR,
+        AND
+    ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),
         ("false", ValueType::Bool(false))

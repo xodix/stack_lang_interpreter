@@ -68,16 +68,108 @@ pub fn print_debug(stack: &mut Vec<ValueType>) {
 }
 
 pub fn if_statement(value_stack: &mut Vec<ValueType>) {
-    let arg1 = value_stack
-        .pop()
-        .expect("Not enough arguments to execute if operation");
-    let arg2 = value_stack
-        .pop()
-        .expect("Not enough arguments to execute if operation.");
+    check_argument_count(value_stack, 2);
+
+    let arg1 = value_stack.pop().unwrap();
+    let arg2 = value_stack.pop().unwrap();
 
     if arg1.truthy() {
         if let ValueType::Scope(stack) = arg2 {
             run(stack, value_stack);
         }
+    }
+}
+
+pub fn lt(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() < arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+pub fn gt(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() > arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+
+pub fn eq(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() == arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+pub fn leq(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() <= arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+pub fn geq(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() >= arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+
+pub fn or(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() && arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
+    }
+}
+pub fn and(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+
+    let arg2 = stack.pop().unwrap();
+
+    if arg1.truthy() || arg2.truthy() {
+        stack.push(ValueType::Bool(true));
+    } else {
+        stack.push(ValueType::Bool(false));
     }
 }

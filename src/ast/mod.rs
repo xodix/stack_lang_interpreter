@@ -20,6 +20,9 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
         let ch = chars[i];
 
         match ch {
+            ' ' => (),
+            '\n' => (),
+
             _ if ch.is_digit(10)
                 || (ch == '-' && src.chars().nth(i + 1).unwrap_or(' ').is_digit(10)) =>
             {
@@ -32,8 +35,6 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
                 &src[i..],
                 &mut i,
             )))),
-
-            ' ' => (),
 
             _ => extract_keyword(&src[i..], stack, &mut i),
         };
