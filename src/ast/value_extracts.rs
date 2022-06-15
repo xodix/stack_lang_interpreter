@@ -88,7 +88,13 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
         "Could not find end of string that started at {i} character."
     ));
 
-    let word = src[1..word_end].to_string();
+    let word = {
+        if word_end == 0 {
+            "".to_string()
+        } else {
+            src[1..word_end].to_string()
+        }
+    };
 
     stack.push(Stack::Value(ValueType::Text(word)));
 

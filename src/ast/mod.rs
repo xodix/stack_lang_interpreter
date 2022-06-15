@@ -10,7 +10,7 @@ use crate::Stack;
 pub use value_extracts::extract_num;
 pub use value_extracts::ValueType;
 
-use self::operation_extracts::extract_operation;
+use self::operation_extracts::extract_keyword;
 
 pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
     let chars: Vec<char> = src.chars().collect();
@@ -35,7 +35,7 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
 
             ' ' => (),
 
-            _ => extract_operation(&src[i..], stack, &mut i),
+            _ => extract_keyword(&src[i..], stack, &mut i),
         };
 
         i += 1;
