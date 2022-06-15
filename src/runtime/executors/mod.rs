@@ -6,6 +6,8 @@ use crate::{
 };
 use math::execute_common_math;
 
+use super::run;
+
 #[inline]
 fn check_argument_count(stack: &Vec<ValueType>, count: usize) {
     if stack.len() < count {
@@ -63,4 +65,19 @@ pub fn print_debug(stack: &mut Vec<ValueType>) {
 
     let arg1 = &stack[stack.len() - 1];
     println!("{:?} is {} element in the stack", arg1, stack.len())
+}
+
+pub fn if_statement(stack: &mut Vec<ValueType>) {
+    let arg1 = stack
+        .pop()
+        .expect("Not enough arguments to execute if operation");
+    let arg2 = stack
+        .pop()
+        .expect("Not enough arguments to execute if operation.");
+
+    if arg1.truthy() {
+        if let ValueType::Scope(stack) = arg2 {
+            run(stack);
+        }
+    }
 }
