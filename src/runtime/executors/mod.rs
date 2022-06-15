@@ -67,17 +67,17 @@ pub fn print_debug(stack: &mut Vec<ValueType>) {
     println!("{:?} is {} element in the stack", arg1, stack.len())
 }
 
-pub fn if_statement(stack: &mut Vec<ValueType>) {
-    let arg1 = stack
+pub fn if_statement(value_stack: &mut Vec<ValueType>) {
+    let arg1 = value_stack
         .pop()
         .expect("Not enough arguments to execute if operation");
-    let arg2 = stack
+    let arg2 = value_stack
         .pop()
         .expect("Not enough arguments to execute if operation.");
 
     if arg1.truthy() {
         if let ValueType::Scope(stack) = arg2 {
-            run(stack);
+            run(stack, value_stack);
         }
     }
 }

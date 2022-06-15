@@ -18,7 +18,10 @@ fn main() {
 
 fn run(src: String) {
     let mut stack = Vec::new();
+    let mut value_stack: Vec<ValueType> = Vec::new();
 
     log_debug_time!(ast::fill_ast(&src, &mut stack), "Parsing src");
-    log_debug_time!(runtime::run(stack), "Executing from ast");
+    log_debug_time!(runtime::run(stack, &mut value_stack), "Executing from ast");
+
+    println!("{:?}", value_stack);
 }
