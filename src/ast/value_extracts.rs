@@ -92,13 +92,13 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
         if word_end == 0 {
             "".to_string()
         } else {
-            src[1..word_end].to_string()
+            src[1..word_end + 1].to_string()
         }
     };
 
     stack.push(Stack::Value(ValueType::Text(word)));
 
-    *i += word_end + 1;
+    *i += word_end + 2;
 }
 
 pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {

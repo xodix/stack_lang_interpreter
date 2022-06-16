@@ -77,3 +77,101 @@ fn test_execute_print_debug() {
     let mut stack = vec![ValueType::Text("Hell'o, World!".to_string())];
     execute_operation(&mut stack, PRINT_DEBUG);
 }
+
+#[test]
+fn test_execute_if_statement_true() {
+    let mut stack = vec![
+        ValueType::Int(1),
+        ValueType::Int(2),
+        ValueType::Scope(vec![Stack::Operation(MUL)]),
+        ValueType::Bool(true),
+    ];
+
+    execute_operation(&mut stack, IF);
+
+    assert_eq!(stack, vec![ValueType::Int(2)]);
+}
+
+#[test]
+fn test_execute_if_statement_false() {
+    let mut stack = vec![
+        ValueType::Int(1),
+        ValueType::Int(2),
+        ValueType::Scope(vec![Stack::Operation(MUL)]),
+        ValueType::Bool(false),
+    ];
+
+    execute_operation(&mut stack, IF);
+
+    assert_eq!(stack, vec![ValueType::Int(1), ValueType::Int(2)]);
+}
+
+#[test]
+fn test_execute_lt() {
+    let mut stack = vec![ValueType::Int(2), ValueType::Int(1)];
+
+    execute_operation(&mut stack, LT);
+
+    // 1 is less than 2
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_gt() {
+    let mut stack = vec![ValueType::Int(1), ValueType::Int(2)];
+
+    execute_operation(&mut stack, GT);
+
+    // 2 is grater than 1
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_eq() {
+    let mut stack = vec![ValueType::Int(5), ValueType::Int(5)];
+
+    execute_operation(&mut stack, EQ);
+
+    // 5 is equal to 5
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_leq() {
+    let mut stack = vec![ValueType::Int(5), ValueType::Int(5)];
+
+    execute_operation(&mut stack, LEQ);
+
+    // 5 is equal or less than 5
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_geq() {
+    let mut stack = vec![ValueType::Int(5), ValueType::Int(5)];
+
+    execute_operation(&mut stack, GEQ);
+
+    // 5 is equal or grater than 5
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_or() {
+    let mut stack = vec![ValueType::Bool(false), ValueType::Bool(true)];
+
+    execute_operation(&mut stack, OR);
+
+    // one of: [false, true] is true
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
+
+#[test]
+fn test_execute_and() {
+    let mut stack = vec![ValueType::Bool(true), ValueType::Bool(true)];
+
+    execute_operation(&mut stack, OR);
+
+    // all of: [true, true] are true
+    assert_eq!(stack, vec![ValueType::Bool(true)]);
+}
