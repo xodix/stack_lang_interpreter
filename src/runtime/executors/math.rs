@@ -1,7 +1,7 @@
 use num::{traits::Pow, Num};
 
 use crate::{
-    ast::operation_extracts::{ADD, DIV, MOD, MUL, POW, SUB},
+    ast::operation_extracts::{ADD, DIV, EQ, GEQ, GT, LEQ, LT, MOD, MUL, POW, SUB},
     ValueType::{self, *},
 };
 
@@ -78,4 +78,40 @@ where
         MOD => n1 % n2,
         _ => panic!("{}: not a valid operation!", operation),
     };
+}
+
+pub fn execute_comparison(stack: &mut Vec<ValueType>, operation: &str) {
+    check_argument_count(stack, 2);
+
+    let arg1 = stack.pop().unwrap();
+    let arg2 = stack.pop().unwrap();
+
+    match arg1 {
+        Int(n1) => {
+            if let ValueType::Int(n2) = arg2 {
+                stack.push(Bool(compare_operation(operation, n1, n2)));
+            } else {
+                mismatched_args("Int", arg2);
+            }
+        }
+        Float(n1) => {
+            if let ValueType::Float(n2) = arg2 {
+                stack.push(Bool(compare_operation(operation, n1, n2)));
+            } else {
+                mismatched_args("Float", arg2);
+            }
+        }
+        _ => panic!("Expected a numeric type, got {:?}", arg1),
+    }
+}
+
+fn compare_operation<T: std::cmp::PartialOrd>(operation: &str, n1: T, n2: T) -> bool {
+    match operation {
+        LT => n1 < n2,
+        GT => n1 > n2,
+        EQ => n1 == n2,
+        LEQ => n1 <= n2,
+        GEQ => n1 >= n2,
+        _ => panic!("{}: not a valid operation!", operation),
+    }
 }

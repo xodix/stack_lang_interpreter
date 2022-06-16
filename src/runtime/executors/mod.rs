@@ -1,10 +1,12 @@
 mod math;
 
 use crate::{
-    ast::operation_extracts::{ADD, DIV, MOD, MUL, POW, SUB},
+    ast::operation_extracts::{ADD, DIV, EQ, GEQ, GT, LEQ, LT, MOD, MUL, POW, SUB},
     ValueType,
 };
 use math::execute_common_math;
+
+use self::math::execute_comparison;
 
 use super::run;
 
@@ -80,71 +82,29 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) {
     }
 }
 
+#[inline]
 pub fn lt(stack: &mut Vec<ValueType>) {
-    check_argument_count(stack, 2);
-
-    let arg1 = stack.pop().unwrap();
-
-    let arg2 = stack.pop().unwrap();
-
-    if arg1.truthy() < arg2.truthy() {
-        stack.push(ValueType::Bool(true));
-    } else {
-        stack.push(ValueType::Bool(false));
-    }
+    execute_comparison(stack, LT)
 }
+
+#[inline]
 pub fn gt(stack: &mut Vec<ValueType>) {
-    check_argument_count(stack, 2);
-
-    let arg1 = stack.pop().unwrap();
-
-    let arg2 = stack.pop().unwrap();
-
-    if arg1.truthy() > arg2.truthy() {
-        stack.push(ValueType::Bool(true));
-    } else {
-        stack.push(ValueType::Bool(false));
-    }
+    execute_comparison(stack, GT);
 }
 
+#[inline]
 pub fn eq(stack: &mut Vec<ValueType>) {
-    check_argument_count(stack, 2);
-
-    let arg1 = stack.pop().unwrap();
-
-    let arg2 = stack.pop().unwrap();
-
-    if arg1.truthy() == arg2.truthy() {
-        stack.push(ValueType::Bool(true));
-    } else {
-        stack.push(ValueType::Bool(false));
-    }
+    execute_comparison(stack, EQ);
 }
+
+#[inline]
 pub fn leq(stack: &mut Vec<ValueType>) {
-    check_argument_count(stack, 2);
-
-    let arg1 = stack.pop().unwrap();
-
-    let arg2 = stack.pop().unwrap();
-
-    if arg1.truthy() <= arg2.truthy() {
-        stack.push(ValueType::Bool(true));
-    } else {
-        stack.push(ValueType::Bool(false));
-    }
+    execute_comparison(stack, LEQ);
 }
+
+#[inline]
 pub fn geq(stack: &mut Vec<ValueType>) {
-    check_argument_count(stack, 2);
-
-    let arg1 = stack.pop().unwrap();
-
-    let arg2 = stack.pop().unwrap();
-
-    if arg1.truthy() >= arg2.truthy() {
-        stack.push(ValueType::Bool(true));
-    } else {
-        stack.push(ValueType::Bool(false));
-    }
+    execute_comparison(stack, GEQ);
 }
 
 pub fn or(stack: &mut Vec<ValueType>) {
@@ -154,7 +114,7 @@ pub fn or(stack: &mut Vec<ValueType>) {
 
     let arg2 = stack.pop().unwrap();
 
-    if arg1.truthy() && arg2.truthy() {
+    if arg1.truthy() || arg2.truthy() {
         stack.push(ValueType::Bool(true));
     } else {
         stack.push(ValueType::Bool(false));
@@ -167,7 +127,7 @@ pub fn and(stack: &mut Vec<ValueType>) {
 
     let arg2 = stack.pop().unwrap();
 
-    if arg1.truthy() || arg2.truthy() {
+    if arg1.truthy() && arg2.truthy() {
         stack.push(ValueType::Bool(true));
     } else {
         stack.push(ValueType::Bool(false));
