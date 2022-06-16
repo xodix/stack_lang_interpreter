@@ -1,0 +1,47 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'stack_lang_compiler'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=stack_lang_compiler",
+					"--package=stack_lang_compiler",
+				],
+				"filter": {
+					"name": "stack_lang_compiler",
+					"kind": "bin"
+				}
+			},
+			"args": [
+				"test.sl"
+			],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'stack_lang_compiler'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=stack_lang_compiler",
+					"--package=stack_lang_compiler"
+				],
+				"filter": {
+					"name": "stack_lang_compiler",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}
