@@ -1,5 +1,9 @@
+#[cfg(test)]
+mod util_test;
+
 use std::{env::args, fs, path::Path};
 
+#[inline]
 fn extract_path() -> String {
     args()
         .nth(1)
@@ -7,7 +11,7 @@ fn extract_path() -> String {
 }
 
 /**
-Function that reads the source file by using the path given by the user.
+Function that reads the source file by using the path given by the user as a cli argument.
 */
 pub fn extract_src() -> String {
     let path = extract_path();
@@ -25,6 +29,8 @@ Macro returns the value of expression.
 macro_rules! log_debug_time {
     ( $function:expr, $what:expr ) => {
         if cfg!(debug_assertions) {
+            use std::time::Instant;
+
             let now = Instant::now();
             let result = $function;
             println!("{} took {:?}", $what, now.elapsed());

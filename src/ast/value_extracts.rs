@@ -1,19 +1,43 @@
 use crate::Stack;
 use std::{error::Error, fmt::Display};
 
+use super::fill_ast;
+
 #[derive(Debug, Clone, PartialEq)]
-pub enum ValueType {
+pub enum ValueType<'a> {
     Int(i32),
     Float(f32),
     Text(String),
+    Scope(Vec<Stack<'a>>),
+    Bool(bool),
 }
 
-impl Display for ValueType {
+impl<'a> ValueType<'a> {
+    pub fn truthy(&self) -> bool {
+        match self {
+            ValueType::Int(number) => *number != 0,
+            ValueType::Float(number) => *number != 0.0,
+            ValueType::Text(text) => text.len() != 0,
+            ValueType::Scope(scope) => scope.len() != 0,
+            ValueType::Bool(condition) => *condition,
+        }
+    }
+}
+
+impl Display for ValueType<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Int(int) => write!(f, "{}", int)?,
             Self::Float(float) => write!(f, "{}", float)?,
             Self::Text(text) => write!(f, "{}", text)?,
+            Self::Scope(scope) => {
+                write!(f, "{{\n")?;
+                for elem in scope {
+                    write!(f, "\t{:?}\n", elem)?;
+                }
+                write!(f, "}}\n")?;
+            }
+            Self::Bool(condition) => write!(f, "{}", if *condition { "true" } else { "false" })?,
         };
 
         Ok(())
@@ -64,9 +88,29 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
         "Could not find end of string that started at {i} character."
     ));
 
-    let word = src[1..word_end].to_string();
+    let word = {
+        if word_end == 0 {
+            "".to_string()
+        } else {
+            src[1..word_end + 1].to_string()
+        }
+    };
 
     stack.push(Stack::Value(ValueType::Text(word)));
 
-    *i += word_end + 1;
+    *i += word_end + 2;
+}
+
+pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
+    let scope_end = src.find('}').expect(&format!(
+        "Could not find end of scope started at {i} character."
+    ));
+
+    let mut scopes_stack: Vec<Stack> = Vec::new();
+    // ! Cloning occurs here.
+    fill_ast(&src[1..scope_end], &mut scopes_stack);
+
+    *i += scope_end + 1;
+
+    scopes_stack
 }
