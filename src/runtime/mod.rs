@@ -6,7 +6,7 @@ mod executors;
 use self::executors::*;
 use crate::{ast::operation_extracts::*, ast::ValueType, Stack};
 
-pub fn run<'a>(stack: Vec<Stack<'a>>, value_stack: &mut Vec<ValueType<'a>>) {
+pub fn run_from_ast<'a>(stack: Vec<Stack<'a>>, value_stack: &mut Vec<ValueType<'a>>) {
     for elem in stack.into_iter() {
         match elem {
             Stack::Operation(operation) => execute_operation(value_stack, operation),

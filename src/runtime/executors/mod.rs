@@ -8,7 +8,7 @@ use math::execute_common_math;
 
 use self::math::execute_comparison;
 
-use super::run;
+use super::run_from_ast;
 
 #[inline]
 fn check_argument_count(stack: &Vec<ValueType>, count: usize) {
@@ -77,7 +77,7 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) {
 
     if arg1.truthy() {
         if let ValueType::Scope(stack) = arg2 {
-            run(stack, value_stack);
+            run_from_ast(stack, value_stack);
         }
     }
 }
