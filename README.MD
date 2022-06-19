@@ -56,7 +56,7 @@ cd stack_lang_compile
 cargo run --release test.sl
 ```
 
-'test.sl' can be replaced with path to a different file
+'test.sl' can be replaced with path to a different file.
 
 # Examples:
 
@@ -82,7 +82,7 @@ The same operation can be written as:
 
 How?
 
-The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two last elements** and adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed
+The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed.
 
 ## If statements
 
@@ -90,7 +90,7 @@ The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **t
 2 3 {*} true if print
 ```
 
-Prints 6 because the condition 'true' is truthy
+Prints 6 because the condition 'true' is truthy.
 
 ```
 2.0 3.0 {/} 4 4 - if print
@@ -108,7 +108,7 @@ Prints 1.5 because '4 4 -' evaluates to 0 which is **not truthy**.
 2 3 < print
 ```
 
-Prints false because 3 is smaller than 2
+Prints false because 3 is smaller than 2.
 
 This language supports '<', '>', '==', '<=', '>='.
 
@@ -189,7 +189,7 @@ Prints:
 
 ## SWITCH
 
-Switch takes the top element and switches it's value with the element proceeding it.
+Switch takes the top element and switches it's value with the second.
 
 ```
 2 1 switch - print
@@ -209,7 +209,7 @@ Prints 3 because 1 + 2 = 3. Instead of 3 + 4 we get 1 + 2.
 
 ## POP
 
-Pop removes the last element from the stack.
+Pop removes the top element on the stack.
 
 ```
 1 2 3 pop + print
