@@ -22,6 +22,7 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
         match ch {
             ' ' => (),
             '\n' => (),
+            '\t' => (),
 
             _ if ch.is_digit(10)
                 || (ch == '-' && src.chars().nth(i + 1).unwrap_or(' ').is_digit(10)) =>

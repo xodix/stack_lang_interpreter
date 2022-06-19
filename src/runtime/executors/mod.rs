@@ -78,6 +78,45 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) {
     if arg1.truthy() {
         if let ValueType::Scope(stack) = arg2 {
             run_from_ast(stack, value_stack);
+        } else {
+            panic!(
+                "{:?} is not a scope. Scope is needed for the if statement",
+                arg2
+            );
+        }
+    }
+}
+
+pub fn for_loop(value_stack: &mut Vec<ValueType>) {
+    check_argument_count(value_stack, 2);
+
+    let arg1 = value_stack.pop().unwrap();
+    let arg2 = value_stack.pop().unwrap();
+
+    match arg1 {
+        ValueType::Int(range) => {
+            if let ValueType::Scope(stack) = arg2 {
+                for _ in 0..range {
+                    // The scope is copied for every iteration. NOT GOOD
+                    run_from_ast(stack.clone(), value_stack);
+                }
+            }
+        }
+        _ => panic!("{:?} cannot be a range for the for loop.", arg1),
+    }
+}
+
+pub fn while_loop(value_stack: &mut Vec<ValueType>) {
+    check_argument_count(value_stack, 2);
+
+    let arg1 = value_stack.pop().unwrap();
+    let arg2 = value_stack.pop().unwrap();
+
+    value_stack.push(arg1);
+
+    if let ValueType::Scope(stack) = arg2 {
+        while value_stack[value_stack.len() - 1].truthy() {
+            run_from_ast(stack.clone(), value_stack);
         }
     }
 }
