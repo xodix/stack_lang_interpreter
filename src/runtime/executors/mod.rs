@@ -202,3 +202,9 @@ pub fn reverse(stack: &mut Vec<ValueType>) {
 pub fn pop(stack: &mut Vec<ValueType>) {
     stack.pop();
 }
+
+pub fn copy(stack: &mut Vec<ValueType>) {
+    let last = stack[stack.len() - 1].clone();
+
+    stack.push(last);
+}

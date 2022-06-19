@@ -44,6 +44,7 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
         SWITCH => switch(stack),
         REVERSE => reverse(stack),
         POP => pop(stack),
+        COPY => copy(stack),
         _ => (),
     }
 }

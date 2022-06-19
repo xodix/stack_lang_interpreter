@@ -30,6 +30,7 @@ pub const PRINT_DEBUG: &str = "print_debug";
 pub const SWITCH: &str = "switch";
 pub const REVERSE: &str = "reverse";
 pub const POP: &str = "pop";
+pub const COPY: &str = "copy";
 
 lazy_static! {
     static ref OPERANDS: HashSet<&'static str> = HashSet::from([
@@ -54,7 +55,8 @@ lazy_static! {
         SWITCH,
         REVERSE,
         POP,
-        NOT
+        NOT,
+        COPY
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),

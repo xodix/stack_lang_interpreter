@@ -226,3 +226,13 @@ Pop removes the top element on the stack.
 ```
 
 Prints 3 because 2 + 1 = 3. Instead of 3 + 2 we get 2 + 1.
+
+## COPY
+
+Copy copies the top element and put it on the stack.
+
+```
+1 2 3 copy + print
+```
+
+Prints 6 because 3 + 3 = 6. Instead of 3 + 2 we get 3 + 3.
