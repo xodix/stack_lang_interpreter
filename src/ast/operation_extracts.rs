@@ -18,6 +18,7 @@ pub const GEQ: &str = ">=";
 
 pub const OR: &str = "||";
 pub const AND: &str = "&&";
+pub const NOT: &str = "!";
 
 pub const IF: &str = "if";
 pub const FOR: &str = "for";
@@ -52,7 +53,8 @@ lazy_static! {
         WHILE,
         SWITCH,
         REVERSE,
-        POP
+        POP,
+        NOT
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),

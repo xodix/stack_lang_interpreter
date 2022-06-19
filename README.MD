@@ -146,6 +146,16 @@ Prints true because 2 and 3 are truthy.
 
 Prints true because 3 is truthy.
 
+## NOT (!)
+
+Not operator (!) makes the top element on the stack not truthy.
+
+```
+3 ! print
+```
+
+Prints 0 because falsy value of Int is 0.
+
 # Loops
 
 ## FOR

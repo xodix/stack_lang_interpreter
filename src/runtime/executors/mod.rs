@@ -174,6 +174,20 @@ pub fn and(stack: &mut Vec<ValueType>) {
     }
 }
 
+pub fn not(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    let arg1 = stack.pop().unwrap();
+
+    stack.push(match arg1 {
+        ValueType::Int(_) => ValueType::Int(0),
+        ValueType::Float(_) => ValueType::Float(0.0),
+        ValueType::Text(_) => ValueType::Text("".to_string()),
+        ValueType::Scope(_) => ValueType::Scope(vec![]),
+        ValueType::Bool(_) => ValueType::Bool(false),
+    });
+}
+
 pub fn switch(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 2);
     let length = stack.len();

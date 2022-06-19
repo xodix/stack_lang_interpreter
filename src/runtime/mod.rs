@@ -32,6 +32,7 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
 
         OR => or(stack),
         AND => and(stack),
+        NOT => not(stack),
 
         IF => if_statement(stack),
         FOR => for_loop(stack),

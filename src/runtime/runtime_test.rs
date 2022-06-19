@@ -177,6 +177,15 @@ fn test_execute_and() {
 }
 
 #[test]
+fn test_execute_not() {
+    let mut stack = vec![ValueType::Bool(true)];
+
+    execute_operation(&mut stack, NOT);
+
+    assert_eq!(stack, vec![ValueType::Bool(false)]);
+}
+
+#[test]
 fn test_execute_for() {
     let mut stack = vec![
         ValueType::Int(2),
