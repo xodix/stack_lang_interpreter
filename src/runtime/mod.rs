@@ -34,6 +34,8 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
         AND => and(stack),
 
         IF => if_statement(stack),
+        FOR => for_loop(stack),
+        WHILE => while_loop(stack),
 
         PRINT => print(stack),
         PRINT_DEBUG => print_debug(stack),

@@ -175,3 +175,38 @@ fn test_execute_and() {
     // all of: [true, true] are true
     assert_eq!(stack, vec![ValueType::Bool(true)]);
 }
+
+#[test]
+fn test_execute_for() {
+    let mut stack = vec![
+        ValueType::Int(2),
+        ValueType::Scope(vec![
+            Stack::Value(ValueType::Int(1)),
+            Stack::Operation(ADD),
+            Stack::Operation(PRINT),
+        ]),
+        ValueType::Int(3),
+    ];
+
+    execute_operation(&mut stack, FOR);
+
+    // 2 + 3 = 5
+    assert_eq!(vec![ValueType::Int(5)], stack);
+}
+
+#[test]
+fn test_execute_while() {
+    let mut stack = vec![
+        ValueType::Scope(vec![
+            Stack::Value(ValueType::Int(-1)),
+            Stack::Operation(ADD),
+            Stack::Operation(PRINT),
+        ]),
+        ValueType::Int(3),
+    ];
+
+    execute_operation(&mut stack, WHILE);
+
+    // top value needs to be falsy to stop execution
+    assert_eq!(vec![ValueType::Int(0)], stack);
+}

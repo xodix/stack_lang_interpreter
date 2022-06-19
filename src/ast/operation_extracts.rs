@@ -20,6 +20,8 @@ pub const OR: &str = "||";
 pub const AND: &str = "&&";
 
 pub const IF: &str = "if";
+pub const FOR: &str = "for";
+pub const WHILE: &str = "while";
 
 pub const PRINT: &str = "print";
 pub const PRINT_DEBUG: &str = "print_debug";
@@ -41,7 +43,9 @@ lazy_static! {
         LEQ,
         GEQ,
         OR,
-        AND
+        AND,
+        FOR,
+        WHILE
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),

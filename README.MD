@@ -145,3 +145,42 @@ Prints true because 2 and 3 are truthy.
 ```
 
 Prints true because 3 is truthy.
+
+# Loops
+
+## FOR
+
+For loop takes the top element (a number) and executes the second element on the stack given amount of times.
+
+```
+2 {1 + print} 3 for
+```
+
+Executes exactly 3 times and prints:
+
+```
+3
+4
+5
+```
+
+## WHILE
+
+While loop takes the top element and runs the scope while top element is truthy.
+
+```
+{-1 + print} 3 while
+```
+
+Prints:
+
+```
+2
+1
+0
+```
+
+- 3 is truthy so -1 is added to the top element.
+- 2 is truthy so -1 is added to the top element.
+- 1 is truthy so -1 is added to the top element.
+- 0 is not truthy so execution of while loop stops.
