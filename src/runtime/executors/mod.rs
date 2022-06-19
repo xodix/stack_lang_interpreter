@@ -159,6 +159,7 @@ pub fn or(stack: &mut Vec<ValueType>) {
         stack.push(ValueType::Bool(false));
     }
 }
+
 pub fn and(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 2);
 
@@ -171,4 +172,19 @@ pub fn and(stack: &mut Vec<ValueType>) {
     } else {
         stack.push(ValueType::Bool(false));
     }
+}
+
+pub fn switch(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+    let length = stack.len();
+
+    stack.swap(length - 1, length - 2);
+}
+
+pub fn reverse(stack: &mut Vec<ValueType>) {
+    stack.reverse();
+}
+
+pub fn pop(stack: &mut Vec<ValueType>) {
+    stack.pop();
 }

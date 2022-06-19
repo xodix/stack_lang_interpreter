@@ -210,3 +210,39 @@ fn test_execute_while() {
     // top value needs to be falsy to stop execution
     assert_eq!(vec![ValueType::Int(0)], stack);
 }
+
+#[test]
+fn test_execute_switch() {
+    let mut stack = vec![ValueType::Int(1), ValueType::Int(2), ValueType::Int(3)];
+
+    execute_operation(&mut stack, SWITCH);
+
+    // top value needs to be falsy to stop execution
+    assert_eq!(
+        vec![ValueType::Int(1), ValueType::Int(3), ValueType::Int(2)],
+        stack
+    );
+}
+
+#[test]
+fn test_execute_reverse() {
+    let mut stack = vec![ValueType::Int(1), ValueType::Int(2), ValueType::Int(3)];
+
+    execute_operation(&mut stack, REVERSE);
+
+    // top value needs to be falsy to stop execution
+    assert_eq!(
+        vec![ValueType::Int(3), ValueType::Int(2), ValueType::Int(1)],
+        stack
+    );
+}
+
+#[test]
+fn test_execute_pop() {
+    let mut stack = vec![ValueType::Int(1), ValueType::Int(2), ValueType::Int(3)];
+
+    execute_operation(&mut stack, POP);
+
+    // top value needs to be falsy to stop execution
+    assert_eq!(vec![ValueType::Int(1), ValueType::Int(2)], stack);
+}

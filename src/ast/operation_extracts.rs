@@ -26,6 +26,10 @@ pub const WHILE: &str = "while";
 pub const PRINT: &str = "print";
 pub const PRINT_DEBUG: &str = "print_debug";
 
+pub const SWITCH: &str = "switch";
+pub const REVERSE: &str = "reverse";
+pub const POP: &str = "pop";
+
 lazy_static! {
     static ref OPERANDS: HashSet<&'static str> = HashSet::from([
         ADD,
@@ -45,7 +49,10 @@ lazy_static! {
         OR,
         AND,
         FOR,
-        WHILE
+        WHILE,
+        SWITCH,
+        REVERSE,
+        POP
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),
@@ -63,6 +70,6 @@ pub fn extract_keyword<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usi
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
         stack.push(Stack::Value(value.clone()));
     } else if presumable_keyword != "" {
-        panic!("Unknown operation `{presumable_keyword}`");
+        panic!("Unknown keyword: `{presumable_keyword}`");
     }
 }

@@ -184,3 +184,35 @@ Prints:
 - 2 is truthy so -1 is added to the top element.
 - 1 is truthy so -1 is added to the top element.
 - 0 is not truthy so execution of while loop stops.
+
+# Operating on the stack
+
+## SWITCH
+
+Switch takes the top element and switches it's value with the element proceeding it.
+
+```
+2 1 switch - print
+```
+
+Prints 1 because 2 - 1 = 1. Instead of 1 - 2 we get 2 - 1.
+
+## REVERSE
+
+Reverse reverses the entire stack.
+
+```
+1 2 3 4 reverse + print
+```
+
+Prints 3 because 1 + 2 = 3. Instead of 3 + 4 we get 1 + 2.
+
+## POP
+
+Pop removes the last element from the stack.
+
+```
+1 2 3 pop + print
+```
+
+Prints 3 because 2 + 1 = 3. Instead of 3 + 2 we get 2 + 1.
