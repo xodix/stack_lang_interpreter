@@ -202,7 +202,7 @@ pub fn switch(stack: &mut Vec<ValueType>) {
     stack.swap(length - 1, length - 2);
 }
 
-pub fn reverse(stack: &mut Vec<ValueType>) {
+pub fn reverse(stack: &mut [ValueType]) {
     stack.reverse();
 }
 

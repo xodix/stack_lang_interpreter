@@ -1,4 +1,4 @@
-use crate::Stack;
+use crate::{util::find_closing_bracket, Stack};
 use std::{error::Error, fmt::Display};
 
 use super::fill_ast;
@@ -17,8 +17,8 @@ impl<'a> ValueType<'a> {
         match self {
             ValueType::Int(number) => *number != 0,
             ValueType::Float(number) => *number != 0.0,
-            ValueType::Text(text) => text.len() != 0,
-            ValueType::Scope(scope) => scope.len() != 0,
+            ValueType::Text(text) => !text.is_empty(),
+            ValueType::Scope(scope) => !scope.is_empty(),
             ValueType::Bool(condition) => *condition,
         }
     }
@@ -31,11 +31,11 @@ impl Display for ValueType<'_> {
             Self::Float(float) => write!(f, "{}", float)?,
             Self::Text(text) => write!(f, "{}", text)?,
             Self::Scope(scope) => {
-                write!(f, "{{\n")?;
+                writeln!(f, "{{")?;
                 for elem in scope {
-                    write!(f, "\t{:?}\n", elem)?;
+                    writeln!(f, "\t{:?}", elem)?;
                 }
-                write!(f, "}}\n")?;
+                writeln!(f, "}}")?;
             }
             Self::Bool(condition) => write!(f, "{}", if *condition { "true" } else { "false" })?,
         };
@@ -47,7 +47,7 @@ impl Display for ValueType<'_> {
 pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     let mut num = String::new();
     let mut index = 0;
-    let is_float = src.contains(".");
+    let is_float = src.contains('.');
 
     for ch in src.chars() {
         if ch != '-' && ch != '_' && !ch.is_digit(10) && ch != '.' {
@@ -84,9 +84,9 @@ pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 }
 
 pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
-    let word_end = src[1..].find('\"').expect(&format!(
-        "Could not find end of string that started at {i} character."
-    ));
+    let word_end = src[1..]
+        .find('\"')
+        .unwrap_or_else(|| panic!("Could not find end of string that started at {i} character."));
 
     let word = {
         if word_end == 0 {
@@ -102,9 +102,7 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 }
 
 pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
-    let scope_end = src.find('}').expect(&format!(
-        "Could not find end of scope started at {i} character."
-    ));
+    let scope_end = find_closing_bracket(src);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
     // ! Cloning occurs here.

@@ -77,7 +77,7 @@ pub fn extract_keyword<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usi
         stack.push(Stack::Operation(presumable_keyword));
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
         stack.push(Stack::Value(value.clone()));
-    } else if presumable_keyword != "" {
+    } else if !presumable_keyword.is_empty() {
         panic!("Unknown keyword: `{presumable_keyword}`");
     }
 }
