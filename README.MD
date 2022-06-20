@@ -40,9 +40,9 @@ git clone "https://github.com/xodix/stack_lang_compiler.git"
 cd stack_lang_compile
 ```
 
-## Running
+# Running
 
-### When using released binary:
+## When using released binary:
 
 ```sh
 ./stack_lang_compiler test.sl
@@ -50,7 +50,7 @@ cd stack_lang_compile
 
 'test.sl' can be replaced with path to a different file.
 
-### When using source code enter:
+## When using source code enter:
 
 ```sh
 cargo run --release test.sl
@@ -58,7 +58,7 @@ cargo run --release test.sl
 
 'test.sl' can be replaced with path to a different file.
 
-# Examples:
+# Syntax with examples:
 
 ## Math and stdio
 
@@ -83,6 +83,22 @@ The same operation can be written as:
 How?
 
 The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed.
+
+## Comments
+
+```
+// This is invisible and is not interpreted.
+```
+
+Prints nothing because it is a comment.
+
+```
+1 2 /*This is invisible and is not interpreted.*/ + print
+```
+
+Prints 3.
+
+Prints nothing because it is a comment.
 
 ## If statements
 
@@ -130,7 +146,7 @@ Prints true because 2 and 3 are truthy.
 
 Prints false because 0 is falsy.
 
-## OR
+### OR
 
 Or operator requires one argument on the stack to be truthy.
 
@@ -146,7 +162,7 @@ Prints true because 2 and 3 are truthy.
 
 Prints true because 3 is truthy.
 
-## NOT (!)
+### NOT (!)
 
 Not operator (!) makes the top element on the stack not truthy.
 
@@ -156,9 +172,9 @@ Not operator (!) makes the top element on the stack not truthy.
 
 Prints 0 because falsy value of Int is 0.
 
-# Loops
+## Loops
 
-## FOR
+### FOR
 
 For loop takes the top element (a number) and executes the second element on the stack given amount of times.
 
@@ -174,7 +190,7 @@ Executes exactly 3 times and prints:
 5
 ```
 
-## WHILE
+### WHILE
 
 While loop takes the top element and runs the scope while top element is truthy.
 
@@ -195,9 +211,9 @@ Prints:
 - 1 is truthy so -1 is added to the top element.
 - 0 is not truthy so execution of while loop stops.
 
-# Operating on the stack
+## Operating on the stack
 
-## SWITCH
+### SWITCH
 
 Switch takes the top element and switches it's value with the second.
 
@@ -207,7 +223,7 @@ Switch takes the top element and switches it's value with the second.
 
 Prints 1 because 2 - 1 = 1. Instead of 1 - 2 we get 2 - 1.
 
-## REVERSE
+### REVERSE
 
 Reverse reverses the entire stack.
 
@@ -217,7 +233,7 @@ Reverse reverses the entire stack.
 
 Prints 3 because 1 + 2 = 3. Instead of 3 + 4 we get 1 + 2.
 
-## POP
+### POP
 
 Pop removes the top element on the stack.
 
@@ -227,7 +243,7 @@ Pop removes the top element on the stack.
 
 Prints 3 because 2 + 1 = 3. Instead of 3 + 2 we get 2 + 1.
 
-## COPY
+### COPY
 
 Copy copies the top element and put it on the stack.
 
