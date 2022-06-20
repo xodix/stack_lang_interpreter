@@ -59,6 +59,13 @@ pub fn print(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
     let arg1 = &stack[stack.len() - 1];
+    print!("{}", arg1);
+}
+
+pub fn println(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    let arg1 = &stack[stack.len() - 1];
     println!("{}", arg1);
 }
 

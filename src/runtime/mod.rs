@@ -39,6 +39,7 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
         WHILE => while_loop(stack),
 
         PRINT => print(stack),
+        PRINTLN => println(stack),
         PRINT_DEBUG => print_debug(stack),
 
         SWITCH => switch(stack),

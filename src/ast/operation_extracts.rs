@@ -25,6 +25,7 @@ pub const FOR: &str = "for";
 pub const WHILE: &str = "while";
 
 pub const PRINT: &str = "print";
+pub const PRINTLN: &str = "println";
 pub const PRINT_DEBUG: &str = "print_debug";
 
 pub const SWITCH: &str = "switch";
@@ -56,7 +57,8 @@ lazy_static! {
         REVERSE,
         POP,
         NOT,
-        COPY
+        COPY,
+        PRINTLN
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),
@@ -65,7 +67,9 @@ lazy_static! {
 }
 
 pub fn extract_keyword<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
-    let presumable_operand_index = src.find(' ').unwrap_or(src.len());
+    let presumable_operand_index = src
+        .find(|c| c == ' ' || c == '\n' || c == '\r')
+        .unwrap_or(src.len());
     *i += presumable_operand_index;
     let presumable_keyword = &src[..presumable_operand_index];
 

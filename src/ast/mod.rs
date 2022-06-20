@@ -24,6 +24,7 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
         match ch {
             ' ' => (),
             '\n' => (),
+            '\r' => (),
             '\t' => (),
 
             '/' => {
