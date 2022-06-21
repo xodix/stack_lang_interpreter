@@ -41,11 +41,12 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
         PRINT => print(stack),
         PRINTLN => println(stack),
         PRINT_DEBUG => print_debug(stack),
+        PRINT_DEBUG_STACK => print_debug_stack(stack),
 
         SWITCH => switch(stack),
         REVERSE => reverse(stack),
         POP => pop(stack),
         COPY => copy(stack),
-        _ => (),
+        _ => panic!("Invalid operation `{}`.", operation),
     }
 }

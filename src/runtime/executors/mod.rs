@@ -2,7 +2,7 @@ mod math;
 
 use crate::{
     ast::operation_extracts::{ADD, DIV, EQ, GEQ, GT, LEQ, LT, MOD, MUL, POW, SUB},
-    ValueType,
+    Stack, ValueType,
 };
 use math::execute_common_math;
 
@@ -74,6 +74,12 @@ pub fn print_debug(stack: &mut Vec<ValueType>) {
 
     let arg1 = &stack[stack.len() - 1];
     println!("{:?} is {} element in the stack", arg1, stack.len())
+}
+
+pub fn print_debug_stack(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    println!("{:#?}", stack);
 }
 
 pub fn if_statement(value_stack: &mut Vec<ValueType>) {
@@ -186,12 +192,22 @@ pub fn not(stack: &mut Vec<ValueType>) {
 
     let arg1 = stack.pop().unwrap();
 
-    stack.push(match arg1 {
-        ValueType::Int(_) => ValueType::Int(0),
-        ValueType::Float(_) => ValueType::Float(0.0),
-        ValueType::Text(_) => ValueType::Text("".to_string()),
-        ValueType::Scope(_) => ValueType::Scope(vec![]),
-        ValueType::Bool(_) => ValueType::Bool(false),
+    stack.push(if arg1.truthy() {
+        match arg1 {
+            ValueType::Int(_) => ValueType::Int(0),
+            ValueType::Float(_) => ValueType::Float(0.0),
+            ValueType::Text(_) => ValueType::Text("".to_string()),
+            ValueType::Scope(_) => ValueType::Scope(vec![]),
+            ValueType::Bool(_) => ValueType::Bool(false),
+        }
+    } else {
+        match arg1 {
+            ValueType::Int(_) => ValueType::Int(1),
+            ValueType::Float(_) => ValueType::Float(1.0),
+            ValueType::Text(_) => ValueType::Text("true".to_string()),
+            ValueType::Scope(_) => ValueType::Scope(vec![Stack::Value(ValueType::Bool(true))]),
+            ValueType::Bool(_) => ValueType::Bool(true),
+        }
     });
 }
 

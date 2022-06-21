@@ -17,5 +17,6 @@ fn test_log_debug_macro() {
 #[test]
 fn test_find_closing_bracket() {
     let src = "{1 2 3 {*} true if {*} false if}";
-    assert_eq!(find_closing_bracket(src), 32);
+    assert_eq!(find_closing_bracket(&src[1..]), 31);
+    println!("{}", &src[1..31]);
 }

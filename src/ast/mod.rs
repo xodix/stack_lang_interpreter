@@ -28,9 +28,9 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
             '\t' => (),
 
             '/' => {
-                if chars[i] == '*' {
+                if chars[i + 1] == '*' {
                     ignore_multiline(&src[i..], &mut i);
-                } else if chars[i] == '/' {
+                } else if chars[i + 1] == '/' {
                     ignore_single_line(&src[i..], &mut i);
                 } else {
                     panic!("Invalid character /");

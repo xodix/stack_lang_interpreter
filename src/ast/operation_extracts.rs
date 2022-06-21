@@ -27,6 +27,7 @@ pub const WHILE: &str = "while";
 pub const PRINT: &str = "print";
 pub const PRINTLN: &str = "println";
 pub const PRINT_DEBUG: &str = "print_debug";
+pub const PRINT_DEBUG_STACK: &str = "print_debug_stack";
 
 pub const SWITCH: &str = "switch";
 pub const REVERSE: &str = "reverse";
@@ -43,6 +44,7 @@ lazy_static! {
         POW,
         PRINT,
         PRINT_DEBUG,
+        PRINT_DEBUG_STACK,
         IF,
         LT,
         GT,

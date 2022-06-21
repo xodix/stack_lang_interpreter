@@ -102,7 +102,7 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 }
 
 pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
-    let scope_end = find_closing_bracket(src);
+    let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
     // ! Cloning occurs here.
