@@ -21,7 +21,7 @@ Creating your own programming language helps with rapidly learning others.
 
 ## Download:
 
-You can use the binary file by downloading it from: <PATH_TO_RELEASE>
+You can use the binary file by downloading it from [here](https://github.com/xodix/stack_lang_compiler/releases/)
 
 ## OR
 
@@ -45,18 +45,18 @@ cd stack_lang_compile
 ## When using released binary:
 
 ```sh
-./stack_lang_compiler test.sl
+./stack_lang_compiler.exe examples/fizzbuzz.sl
 ```
 
-'test.sl' can be replaced with path to a different file.
+'examples/fizzbuzz.sl' can be replaced with path to a different file.
 
 ## When using source code enter:
 
 ```sh
-cargo run --release test.sl
+cargo run --release examples/fizzbuzz.sl
 ```
 
-'test.sl' can be replaced with path to a different file.
+'examples/fizzbuzz.sl' can be replaced with path to a different file.
 
 # Syntax with examples:
 
