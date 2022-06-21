@@ -66,13 +66,13 @@ cargo run --release test.sl
 1 2 + print
 ```
 
-Prints 3 to standard output.
+Prints `3` to standard output.
 
 ```
 1 2 + 3 * print_debug
 ```
 
-Prints Int(9) to standard output because 1 + 2 = 3 and 3 \* 3 = 9.
+Prints `Int(9)` to standard output because `1 + 2 = 3` and `3 \* 3 = 9`.
 
 The same operation can be written as:
 
@@ -96,9 +96,7 @@ Prints nothing because it is a comment.
 1 2 /*This is invisible and is not interpreted.*/ + print
 ```
 
-Prints 3.
-
-Prints nothing because it is a comment.
+Prints `3`.
 
 ## If statements
 
@@ -106,13 +104,13 @@ Prints nothing because it is a comment.
 2 3 {*} true if print
 ```
 
-Prints 6 because the condition 'true' is truthy.
+Prints `6` because the condition 'true' is truthy.
 
 ```
 2.0 3.0 {/} 4 4 - if print
 ```
 
-Prints 1.5 because '4 4 -' evaluates to 0 which is **not truthy**.
+Prints `1.5` because `4 4 -` evaluates to `0` which is **not truthy**.
 
 **Scopes** contain operations and values that can be executed.
 
@@ -124,7 +122,7 @@ Prints 1.5 because '4 4 -' evaluates to 0 which is **not truthy**.
 2 3 < print
 ```
 
-Prints false because 3 is smaller than 2.
+Prints false because `3` is smaller than `2`.
 
 This language supports '<', '>', '==', '<=', '>='.
 
@@ -138,13 +136,13 @@ And operator requires two arguments on the stack to be truthy.
 2 3 && print
 ```
 
-Prints true because 2 and 3 are truthy.
+Prints `true` because `2` and `3` are truthy.
 
 ```
 0 3 && print
 ```
 
-Prints false because 0 is falsy.
+Prints `false` because `0` is falsy.
 
 ### OR
 
@@ -154,23 +152,29 @@ Or operator requires one argument on the stack to be truthy.
 2 3 || print
 ```
 
-Prints true because 2 and 3 are truthy.
+Prints true because `2` and `3` are truthy.
 
 ```
 0 3 || print
 ```
 
-Prints true because 3 is truthy.
+Prints `true` because `3` is truthy.
 
 ### NOT (!)
 
-Not operator (!) makes the top element on the stack not truthy.
+Not operator (!) makes the top element on the stack falsy if it is truthy and truthy if it is falsy.
 
 ```
 3 ! print
 ```
 
-Prints 0 because falsy value of Int is 0.
+Prints `0` because falsy value of Int is `0`.
+
+```
+0 ! print
+```
+
+Prints `1` because truthy value of Int is `1`.
 
 ## Loops
 
@@ -179,7 +183,7 @@ Prints 0 because falsy value of Int is 0.
 For loop takes the top element (a number) and executes the second element on the stack given amount of times.
 
 ```
-2 {1 + print} 3 for
+2 {1 + println} 3 for
 ```
 
 Executes exactly 3 times and prints:
@@ -195,7 +199,7 @@ Executes exactly 3 times and prints:
 While loop takes the top element and runs the scope while top element is truthy.
 
 ```
-{-1 + print} 3 while
+{-1 + println} 3 while
 ```
 
 Prints:
@@ -221,7 +225,7 @@ Switch takes the top element and switches it's value with the second.
 2 1 switch - print
 ```
 
-Prints 1 because 2 - 1 = 1. Instead of 1 - 2 we get 2 - 1.
+Prints `1` because `2 - 1 = 1`. Instead of `1 - 2` we get `2 - 1`.
 
 ### REVERSE
 
@@ -231,7 +235,7 @@ Reverse reverses the entire stack.
 1 2 3 4 reverse + print
 ```
 
-Prints 3 because 1 + 2 = 3. Instead of 3 + 4 we get 1 + 2.
+Prints `3` because `1 + 2 = 3`. Instead of `3 + 4` we get `1 + 2`.
 
 ### POP
 
@@ -241,7 +245,7 @@ Pop removes the top element on the stack.
 1 2 3 pop + print
 ```
 
-Prints 3 because 2 + 1 = 3. Instead of 3 + 2 we get 2 + 1.
+Prints `3` because `2 + 1 = 3`. Instead of `3 + 2` we get `2 + 1`.
 
 ### COPY
 
@@ -251,4 +255,4 @@ Copy copies the top element and put it on the stack.
 1 2 3 copy + print
 ```
 
-Prints 6 because 3 + 3 = 6. Instead of 3 + 2 we get 3 + 3.
+Prints `6` because `3 + 3 = 6`. Instead of `3 + 2` we get `3 + 3`.
