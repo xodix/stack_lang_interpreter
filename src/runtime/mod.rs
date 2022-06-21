@@ -32,13 +32,21 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: &str) {
 
         OR => or(stack),
         AND => and(stack),
+        NOT => not(stack),
 
         IF => if_statement(stack),
         FOR => for_loop(stack),
         WHILE => while_loop(stack),
 
         PRINT => print(stack),
+        PRINTLN => println(stack),
         PRINT_DEBUG => print_debug(stack),
-        _ => (),
+        PRINT_DEBUG_STACK => print_debug_stack(stack),
+
+        SWITCH => switch(stack),
+        REVERSE => reverse(stack),
+        POP => pop(stack),
+        COPY => copy(stack),
+        _ => panic!("Invalid operation `{}`.", operation),
     }
 }

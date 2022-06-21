@@ -1,13 +1,15 @@
 #[cfg(test)]
 mod ast_test;
 
+mod comments;
 pub mod operation_extracts;
-pub mod value_extracts;
+mod value_extracts;
 
+use self::comments::{ignore_multiline, ignore_single_line};
 use self::value_extracts::extract_scope;
-pub use self::value_extracts::extract_string;
+use self::value_extracts::extract_string;
 use crate::Stack;
-pub use value_extracts::extract_num;
+use value_extracts::extract_num;
 pub use value_extracts::ValueType;
 
 use self::operation_extracts::extract_keyword;
@@ -22,7 +24,18 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
         match ch {
             ' ' => (),
             '\n' => (),
+            '\r' => (),
             '\t' => (),
+
+            '/' => {
+                if chars[i + 1] == '*' {
+                    ignore_multiline(&src[i..], &mut i);
+                } else if chars[i + 1] == '/' {
+                    ignore_single_line(&src[i..], &mut i);
+                } else {
+                    panic!("Invalid character /");
+                }
+            }
 
             _ if ch.is_digit(10)
                 || (ch == '-' && src.chars().nth(i + 1).unwrap_or(' ').is_digit(10)) =>

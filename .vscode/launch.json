@@ -20,7 +20,7 @@
 				}
 			},
 			"args": [
-				"test.sl"
+				"examples/fizzbuzz.sl"
 			],
 			"cwd": "${workspaceFolder}"
 		},

@@ -66,7 +66,7 @@ pub fn execute_common_math(stack: &mut Vec<ValueType>, operation: &str) {
     }
 }
 
-fn calculate_operation<'a, T>(operation: &str, n1: T, n2: T) -> T
+fn calculate_operation<T>(operation: &str, n1: T, n2: T) -> T
 where
     T: Num,
 {

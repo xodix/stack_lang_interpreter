@@ -1,4 +1,4 @@
-use crate::log_debug_time;
+use crate::{log_debug_time, util::find_closing_bracket};
 
 #[test]
 fn test_log_debug_macro() {
@@ -12,4 +12,11 @@ fn test_log_debug_macro() {
     let result = log_debug_time!(expensive_operation(), "Expensive operation");
 
     assert_eq!(5, result);
+}
+
+#[test]
+fn test_find_closing_bracket() {
+    let src = "{1 2 3 {*} true if {*} false if}";
+    assert_eq!(find_closing_bracket(&src[1..]), 31);
+    println!("{}", &src[1..31]);
 }

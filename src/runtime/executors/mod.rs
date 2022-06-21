@@ -2,7 +2,7 @@ mod math;
 
 use crate::{
     ast::operation_extracts::{ADD, DIV, EQ, GEQ, GT, LEQ, LT, MOD, MUL, POW, SUB},
-    ValueType,
+    Stack, ValueType,
 };
 use math::execute_common_math;
 
@@ -59,6 +59,13 @@ pub fn print(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
     let arg1 = &stack[stack.len() - 1];
+    print!("{}", arg1);
+}
+
+pub fn println(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    let arg1 = &stack[stack.len() - 1];
     println!("{}", arg1);
 }
 
@@ -67,6 +74,12 @@ pub fn print_debug(stack: &mut Vec<ValueType>) {
 
     let arg1 = &stack[stack.len() - 1];
     println!("{:?} is {} element in the stack", arg1, stack.len())
+}
+
+pub fn print_debug_stack(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    println!("{:#?}", stack);
 }
 
 pub fn if_statement(value_stack: &mut Vec<ValueType>) {
@@ -159,6 +172,7 @@ pub fn or(stack: &mut Vec<ValueType>) {
         stack.push(ValueType::Bool(false));
     }
 }
+
 pub fn and(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 2);
 
@@ -171,4 +185,49 @@ pub fn and(stack: &mut Vec<ValueType>) {
     } else {
         stack.push(ValueType::Bool(false));
     }
+}
+
+pub fn not(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 1);
+
+    let arg1 = stack.pop().unwrap();
+
+    stack.push(if arg1.truthy() {
+        match arg1 {
+            ValueType::Int(_) => ValueType::Int(0),
+            ValueType::Float(_) => ValueType::Float(0.0),
+            ValueType::Text(_) => ValueType::Text("".to_string()),
+            ValueType::Scope(_) => ValueType::Scope(vec![]),
+            ValueType::Bool(_) => ValueType::Bool(false),
+        }
+    } else {
+        match arg1 {
+            ValueType::Int(_) => ValueType::Int(1),
+            ValueType::Float(_) => ValueType::Float(1.0),
+            ValueType::Text(_) => ValueType::Text("true".to_string()),
+            ValueType::Scope(_) => ValueType::Scope(vec![Stack::Value(ValueType::Bool(true))]),
+            ValueType::Bool(_) => ValueType::Bool(true),
+        }
+    });
+}
+
+pub fn switch(stack: &mut Vec<ValueType>) {
+    check_argument_count(stack, 2);
+    let length = stack.len();
+
+    stack.swap(length - 1, length - 2);
+}
+
+pub fn reverse(stack: &mut [ValueType]) {
+    stack.reverse();
+}
+
+pub fn pop(stack: &mut Vec<ValueType>) {
+    stack.pop();
+}
+
+pub fn copy(stack: &mut Vec<ValueType>) {
+    let last = stack[stack.len() - 1].clone();
+
+    stack.push(last);
 }
