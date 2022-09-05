@@ -6,9 +6,9 @@ It takes heavy inspiration from postscript and forth.
 
 Creating a completely new programing language may seem like a daunting task. However it is quite simple.
 
-In case of interpreted languages (ones not compiled to machine code) it is simply a process of:
+In case of interpreted languages (ones not compiled to standalone executable) it is simply a process of:
 
-1. Parsing the source code into AST (Asynchronous Syntax Tree).
+1. Parsing the source code into AST (Abstract Syntax Tree).
 2. Executing the code based on AST created in step 1.
 
 # Goals
