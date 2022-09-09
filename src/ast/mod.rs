@@ -12,7 +12,7 @@ use crate::Stack;
 use value_extracts::extract_num;
 pub use value_extracts::ValueType;
 
-use self::operation_extracts::extract_keyword;
+use self::operation_extracts::{extract_keyword, DIV};
 
 pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
     let chars: Vec<char> = src.chars().collect();
@@ -33,7 +33,7 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
                 } else if chars[i + 1] == '/' {
                     ignore_single_line(&src[i..], &mut i);
                 } else {
-                    panic!("Invalid character /");
+                    stack.push(Stack::Operation(DIV))
                 }
             }
 
