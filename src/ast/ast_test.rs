@@ -4,7 +4,7 @@ use crate::{
     ast::{
         extract_num, extract_string,
         operation_extracts::{ADD, MUL},
-        value_extracts::{extract_scope, register_user_definition},
+        value_extracts::{extract_scope, register_constant, register_macro},
     },
     Stack, ValueType,
 };
@@ -130,7 +130,7 @@ fn test_extract_scope() {
 }
 
 #[test]
-fn test_extract_function() {
+fn test_register_function() {
     let mut stack = vec![
         Stack::Value(ValueType::Int(4)),
         Stack::Value(ValueType::Scope(vec![
@@ -142,7 +142,7 @@ fn test_extract_function() {
 
     let user_definitions = Rc::new(RefCell::new(HashMap::new()));
 
-    register_user_definition(&mut stack, user_definitions.clone());
+    register_macro(&mut stack, user_definitions.clone());
 
     assert!(user_definitions
         .borrow()
@@ -155,6 +155,31 @@ fn test_extract_function() {
             Stack::Value(ValueType::Int(4)),
             Stack::Value(ValueType::Int(2)),
             Stack::Operation(MUL),
+        ],
+        stack
+    );
+}
+
+#[test]
+fn test_register_constant() {
+    let mut stack = vec![
+        Stack::Value(ValueType::Int(2)),
+        Stack::Value(ValueType::Int(5)),
+        Stack::Value(ValueType::Text("FIVE".to_string())),
+    ];
+
+    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+
+    register_constant(&mut stack, user_definitions.clone());
+
+    assert!(user_definitions.borrow().contains_key(&"FIVE".to_string()));
+
+    extract_keyword("FIVE", &mut stack, &mut 0, user_definitions.clone());
+
+    assert_eq!(
+        vec![
+            Stack::Value(ValueType::Int(2)),
+            Stack::Value(ValueType::Int(5)),
         ],
         stack
     );

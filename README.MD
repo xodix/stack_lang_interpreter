@@ -1,10 +1,10 @@
 # Stack lang
 
-This is an interpreted programming language based on the concept of a stack.
+Stack lang is an interpreted programming language based on the concept of a stack.
 
 It takes heavy inspiration from postscript and forth.
 
-Creating a completely new programing language may seem like a daunting task. However, it is quite simple.
+Creating a new programing language may seem like a daunting task. However, it is quite simple.
 
 In the case of interpreted languages (ones not compiled to machine code), it is simply a process of:
 
@@ -32,7 +32,7 @@ You will need:
 1. [cargo + rustc](https://www.rust-lang.org/tools/install)
 2. Visual Studio C++ Build tools / GCC
 
-First clone and enter the repository from the console:
+Firstly clone and enter the repository from the console:
 
 ```sh
 git clone "https://github.com/xodix/stack_lang_compiler.git"
@@ -112,7 +112,7 @@ Prints `6` because the condition 'true' is truthy.
 
 Prints `1.5` because `4 4 -` evaluates to `0` which is **not truthy**.
 
-**Scopes** contains operations and values that can be executed.
+**Scopes** contain operations and values that can be executed.
 
 **Truthy** values do not mean 0 in some way. For example "" (empty string) is **falsy** because its length is 0.
 
@@ -186,7 +186,7 @@ For loop takes the top element (a number) and executes the second element on the
 2 {1 + println} 3 for
 ```
 
-Executes exactly 3 times and prints:
+Executes 3 times and prints:
 
 ```
 3
@@ -274,3 +274,14 @@ The stack contains: number `5`, `scope` and `"double"`.
 Then macros name and its scope is popped from the stack and saved in memory.
 
 When the double macro is executed the top element on the stack is multiplied by two and printed.
+
+## Constants
+
+Constants give defined values names.
+
+```
+5 "LUCKY" const
+LUCKY 2 * print
+```
+
+Prints `10` because `LUCKY` is now an alias for `5`.

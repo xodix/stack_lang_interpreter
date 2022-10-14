@@ -120,10 +120,7 @@ pub fn extract_scope<'a>(
     scopes_stack
 }
 
-pub fn register_user_definition<'a>(
-    stack: &mut Vec<Stack<'a>>,
-    user_definitions: UserDefinitions<'a>,
-) {
+pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(ValueType::Scope(contents)) => {
@@ -133,9 +130,22 @@ pub fn register_user_definition<'a>(
                 panic!("Expected Scope, but got {:?}", val);
             }
         },
-        val => panic!(
-            "Cannot register user definition that is named with {:?}",
-            val
-        ),
+        val => panic!("Cannot register function named with {:?}", val),
+    }
+}
+
+pub fn register_constant<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
+    match stack.pop().unwrap() {
+        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
+            Stack::Value(val) => {
+                user_definitions
+                    .borrow_mut()
+                    .insert(name, vec![Stack::Value(val)]);
+            }
+            val => {
+                panic!("Expected Value, but got {:?}", val);
+            }
+        },
+        val => panic!("Cannot register a constant named with {:?}", val),
     }
 }
