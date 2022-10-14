@@ -7,7 +7,7 @@ use std::{env::args, fs, path::Path};
 fn extract_path() -> String {
     args()
         .nth(1)
-        .expect("You need to supply the path to source code.\n\nStackLang.exe <PATH_TO_SRC>\n\n")
+        .expect("You need to supply a path to source code.\n\nStackLang.exe <PATH_TO_SRC>\n\n")
 }
 
 /**

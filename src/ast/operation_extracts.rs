@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::{Stack, ValueType};
 
-use super::value_extracts::register_user_definition;
+use super::value_extracts::{register_constant, register_macro};
 
 pub const ADD: &str = "+";
 pub const SUB: &str = "-";
@@ -37,6 +37,7 @@ pub const POP: &str = "pop";
 pub const COPY: &str = "copy";
 
 pub const MACRO: &str = "macro";
+pub const CONST: &str = "const";
 
 lazy_static! {
     static ref OPERANDS: HashSet<&'static str> = HashSet::from([
@@ -65,7 +66,8 @@ lazy_static! {
         NOT,
         COPY,
         PRINTLN,
-        MACRO
+        MACRO,
+        CONST
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),
@@ -87,7 +89,9 @@ pub fn extract_keyword<'a>(
 
     if OPERANDS.contains(&presumable_keyword) {
         if presumable_keyword == MACRO {
-            register_user_definition(stack, user_definitions);
+            register_macro(stack, user_definitions);
+        } else if presumable_keyword == CONST {
+            register_constant(stack, user_definitions);
         } else {
             stack.push(Stack::Operation(presumable_keyword));
         }
