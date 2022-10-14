@@ -21,7 +21,7 @@ Creating your programming language helps with rapidly learning others.
 
 ## Download:
 
-You can use the binary file by downloading it from [here](https://github.com/xodix/stack_lang_compiler/releases/)
+You can use the binary file by downloading it from [here](https://github.com/xodix/stack_lang_compiler/releases/latest)
 
 ## OR
 
