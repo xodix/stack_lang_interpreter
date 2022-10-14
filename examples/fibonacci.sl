@@ -1,15 +1,15 @@
-0
-print
+2
+println
 
-1
-print
+3
+println
 
 {
 	copy
 	reverse
 	+
 
-	print
+	println
 }
 
 10 for
