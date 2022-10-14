@@ -1,9 +1,8 @@
 use lazy_static::lazy_static;
 use std::collections::{HashMap, HashSet};
 
+use super::value::{register_constant, register_macro};
 use crate::{Stack, ValueType};
-
-use super::value_extracts::{register_constant, register_macro};
 
 pub const ADD: &str = "+";
 pub const SUB: &str = "-";
@@ -75,7 +74,7 @@ lazy_static! {
     ]);
 }
 
-pub fn extract_keyword<'a>(
+pub fn keyword<'a>(
     src: &'a str,
     stack: &mut Vec<Stack<'a>>,
     i: &mut usize,
