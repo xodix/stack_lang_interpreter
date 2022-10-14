@@ -1,21 +1,21 @@
 # Stack lang
 
-This is an interpreted programming language based on a concept of a stack.
+This is an interpreted programming language based on the concept of a stack.
 
 It takes heavy inspiration from postscript and forth.
 
-Creating a completely new programing language may seem like a daunting task. However it is quite simple.
+Creating a completely new programing language may seem like a daunting task. However, it is quite simple.
 
-In case of interpreted languages (ones not compiled to standalone executable) it is simply a process of:
+In the case of interpreted languages (ones not compiled to machine code), it is simply a process of:
 
-1. Parsing the source code into AST (Abstract Syntax Tree).
-2. Executing the code based on AST created in step 1.
+1. Parsing the source code into AST (Asynchronous Syntax Tree).
+2. Executing the code from it.
 
 # Goals
 
-My goal with creating this project is to expand my horizons on new type of programming paradigms. This project also serves as a reminder that programming languages are just programs that turn text into instructions on a cpu.
+My goal in creating this project is to expand my horizons on a new types of programming paradigms. This project also serves as a reminder that programming languages are just programs that turn text into instructions on a CPU.
 
-Creating your own programming language helps with rapidly learning others.
+Creating your programming language helps with rapidly learning others.
 
 # How to run
 
@@ -48,7 +48,7 @@ cd stack_lang_compile
 ./stack_lang_compiler.exe examples/fizzbuzz.sl
 ```
 
-'examples/fizzbuzz.sl' can be replaced with path to a different file.
+'examples/fizzbuzz.sl' can be replaced with a path to a different file.
 
 ## When using source code enter:
 
@@ -56,7 +56,7 @@ cd stack_lang_compile
 cargo run --release examples/fizzbuzz.sl
 ```
 
-'examples/fizzbuzz.sl' can be replaced with path to a different file.
+'examples/fizzbuzz.sl' can be replaced with a path to a different file.
 
 # Syntax with examples:
 
@@ -82,7 +82,7 @@ The same operation can be written as:
 
 How?
 
-The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next it sees '\*' and multiplies [3, 3]. That leaves us with [9], that is 'print'-ed.
+The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next, it sees '\*' and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
 
 ## Comments
 
@@ -112,9 +112,9 @@ Prints `6` because the condition 'true' is truthy.
 
 Prints `1.5` because `4 4 -` evaluates to `0` which is **not truthy**.
 
-**Scopes** contain operations and values that can be executed.
+**Scopes** contains operations and values that can be executed.
 
-**Truthy** values are ones that do not mean 0 in some way. For example "" (empty string) is **falsy** because its length is 0.
+**Truthy** values do not mean 0 in some way. For example "" (empty string) is **falsy** because its length is 0.
 
 ## Comparisons
 
@@ -152,7 +152,7 @@ Or operator requires one argument on the stack to be truthy.
 2 3 || print
 ```
 
-Prints true because `2` and `3` are truthy.
+Prints `true` because `2` and `3` are truthy.
 
 ```
 0 3 || print
@@ -168,19 +168,19 @@ Not operator (!) makes the top element on the stack falsy if it is truthy and tr
 3 ! print
 ```
 
-Prints `0` because falsy value of Int is `0`.
+Prints `0` because the falsy value of Int is `0`.
 
 ```
 0 ! print
 ```
 
-Prints `1` because truthy value of Int is `1`.
+Prints `1` because the truthy value of Int is `1`.
 
 ## Loops
 
 ### FOR
 
-For loop takes the top element (a number) and executes the second element on the stack given amount of times.
+For loop takes the top element (a number) and executes the second element on the stack a given amount of times.
 
 ```
 2 {1 + println} 3 for
@@ -196,7 +196,7 @@ Executes exactly 3 times and prints:
 
 ### WHILE
 
-While loop takes the top element and runs the scope while top element is truthy.
+While loop takes the top element and runs the scope while the top element is truthy.
 
 ```
 {-1 + println} 3 while
@@ -213,13 +213,13 @@ Prints:
 - 3 is truthy so -1 is added to the top element.
 - 2 is truthy so -1 is added to the top element.
 - 1 is truthy so -1 is added to the top element.
-- 0 is not truthy so execution of while loop stops.
+- 0 is not truthy so the execution of the while loop stops.
 
 ## Operating on the stack
 
 ### SWITCH
 
-Switch takes the top element and switches it's value with the second.
+Switch takes the top element and switches its value with the second.
 
 ```
 2 1 switch - print
@@ -256,3 +256,21 @@ Copy copies the top element and put it on the stack.
 ```
 
 Prints `6` because `3 + 3 = 6`. Instead of `3 + 2` we get `3 + 3`.
+
+## Macros (functions)
+
+Macros make a scope accessible by its name.
+
+```
+5
+{2 *} "double" macro
+double print
+```
+
+Prints `10` because `5 * 2 = 10`.
+
+The stack contains: number `5`, `scope` and `"double"`.
+
+Then macros name and its scope is popped from the stack and saved in memory.
+
+When the double macro is executed the top element on the stack is multiplied by two and printed.

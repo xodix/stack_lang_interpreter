@@ -1,4 +1,4 @@
-use crate::{util::find_closing_bracket, Stack};
+use crate::{util::find_closing_bracket, Stack, UserDefinitions};
 use std::{error::Error, fmt::Display};
 
 use super::fill_ast;
@@ -101,14 +101,41 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     *i += word_end + 2;
 }
 
-pub fn extract_scope<'a>(src: &'a str, i: &mut usize) -> Vec<Stack<'a>> {
+pub fn extract_scope<'a>(
+    src: &'a str,
+    i: &mut usize,
+    user_definitions: UserDefinitions<'a>,
+) -> Vec<Stack<'a>> {
     let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
-    // ! Cloning occurs here.
-    fill_ast(&src[1..scope_end], &mut scopes_stack);
+    fill_ast(
+        &src[1..scope_end],
+        &mut scopes_stack,
+        user_definitions.clone(),
+    );
 
     *i += scope_end + 1;
 
     scopes_stack
+}
+
+pub fn register_user_definition<'a>(
+    stack: &mut Vec<Stack<'a>>,
+    user_definitions: UserDefinitions<'a>,
+) {
+    match stack.pop().unwrap() {
+        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
+            Stack::Value(ValueType::Scope(contents)) => {
+                user_definitions.borrow_mut().insert(name, contents);
+            }
+            val => {
+                panic!("Expected Scope, but got {:?}", val);
+            }
+        },
+        val => panic!(
+            "Cannot register user definition that is named with {:?}",
+            val
+        ),
+    }
 }
