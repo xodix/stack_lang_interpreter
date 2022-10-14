@@ -256,3 +256,19 @@ Copy copies the top element and put it on the stack.
 ```
 
 Prints `6` because `3 + 3 = 6`. Instead of `3 + 2` we get `3 + 3`.
+
+## Macros (functions)
+
+Macros make a scope accessible by its name.
+
+```
+5 {2 *} "double" macro double print
+```
+
+Prints `10` because `5 * 2 = 10`.
+
+The stack first contains the number `5`, `scope` and `"double"` string.
+
+Then macros name and its scope is then popped from the stack and saved in memory.
+
+When the double macro is executed the top element on the stack is multiplied by two and printed.

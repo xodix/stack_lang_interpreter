@@ -5,16 +5,22 @@ mod comments;
 pub mod operation_extracts;
 mod value_extracts;
 
+use std::rc::Rc;
+
 use self::comments::{ignore_multiline, ignore_single_line};
 use self::value_extracts::extract_scope;
 use self::value_extracts::extract_string;
-use crate::Stack;
+use crate::{Stack, UserDefinitions};
 use value_extracts::extract_num;
 pub use value_extracts::ValueType;
 
 use self::operation_extracts::{extract_keyword, DIV};
 
-pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
+pub fn fill_ast<'a>(
+    src: &'a str,
+    stack: &mut Vec<Stack<'a>>,
+    user_definitions: UserDefinitions<'a>,
+) {
     let chars: Vec<char> = src.chars().collect();
     let mut i = 0;
 
@@ -48,9 +54,10 @@ pub fn fill_ast<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
             '{' => stack.push(Stack::Value(ValueType::Scope(extract_scope(
                 &src[i..],
                 &mut i,
+                Rc::clone(&user_definitions),
             )))),
 
-            _ => extract_keyword(&src[i..], stack, &mut i),
+            _ => extract_keyword(&src[i..], stack, &mut i, user_definitions.clone()),
         };
 
         i += 1;

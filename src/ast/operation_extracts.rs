@@ -3,6 +3,8 @@ use std::collections::{HashMap, HashSet};
 
 use crate::{Stack, ValueType};
 
+use super::value_extracts::register_user_definition;
+
 pub const ADD: &str = "+";
 pub const SUB: &str = "-";
 pub const MUL: &str = "*";
@@ -34,6 +36,8 @@ pub const REVERSE: &str = "reverse";
 pub const POP: &str = "pop";
 pub const COPY: &str = "copy";
 
+pub const MACRO: &str = "macro";
+
 lazy_static! {
     static ref OPERANDS: HashSet<&'static str> = HashSet::from([
         ADD,
@@ -60,7 +64,8 @@ lazy_static! {
         POP,
         NOT,
         COPY,
-        PRINTLN
+        PRINTLN,
+        MACRO
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
         ("true", ValueType::Bool(true)),
@@ -68,7 +73,12 @@ lazy_static! {
     ]);
 }
 
-pub fn extract_keyword<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usize) {
+pub fn extract_keyword<'a>(
+    src: &'a str,
+    stack: &mut Vec<Stack<'a>>,
+    i: &mut usize,
+    user_definitions: crate::UserDefinitions<'a>,
+) {
     let presumable_operand_index = src
         .find(|c| c == ' ' || c == '\n' || c == '\r')
         .unwrap_or(src.len());
@@ -76,7 +86,16 @@ pub fn extract_keyword<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>, i: &mut usi
     let presumable_keyword = &src[..presumable_operand_index];
 
     if OPERANDS.contains(&presumable_keyword) {
-        stack.push(Stack::Operation(presumable_keyword));
+        if presumable_keyword == MACRO {
+            register_user_definition(stack, user_definitions);
+        } else {
+            stack.push(Stack::Operation(presumable_keyword));
+        }
+    } else if let Some(function) = user_definitions
+        .borrow()
+        .get(&presumable_keyword.to_string())
+    {
+        stack.extend_from_slice(function);
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
         stack.push(Stack::Value(value.clone()));
     } else if !presumable_keyword.is_empty() {
