@@ -46,16 +46,16 @@ macro_rules! log_debug_time {
 Function that gives the position of corresponding bracket in the string.
 */
 pub fn find_closing_bracket(src: &str) -> usize {
-    let mut indentation_level = 0;
+    let mut open_brackets = 0;
 
     for (i, ch) in src.chars().enumerate() {
         if ch == '{' {
-            indentation_level += 1;
+            open_brackets += 1;
         } else if ch == '}' {
-            if indentation_level == 0 {
+            if open_brackets == 0 {
                 return i + 1;
             } else {
-                indentation_level -= 1;
+                open_brackets -= 1;
             }
         }
     }

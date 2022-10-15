@@ -1,14 +1,8 @@
 mod math;
 
-use crate::{
-    ast::operation_extracts::{ADD, DIV, EQ, GEQ, GT, LEQ, LT, MOD, MUL, POW, SUB},
-    Stack, ValueType,
-};
-use math::execute_common_math;
-
-use self::math::execute_comparison;
-
-use super::run_from_ast;
+use super::run;
+use crate::{ast::extract::operation::*, Stack, ValueType};
+use math::*;
 
 #[inline]
 fn check_argument_count(stack: &Vec<ValueType>, count: usize) {
@@ -90,7 +84,7 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) {
 
     if arg1.truthy() {
         if let ValueType::Scope(stack) = arg2 {
-            run_from_ast(stack, value_stack);
+            run(stack, value_stack);
         } else {
             panic!(
                 "{:?} is not a scope. Scope is needed for the if statement",
@@ -111,7 +105,7 @@ pub fn for_loop(value_stack: &mut Vec<ValueType>) {
             if let ValueType::Scope(stack) = arg2 {
                 for _ in 0..range {
                     // The scope is copied for every iteration. NOT GOOD
-                    run_from_ast(stack.clone(), value_stack);
+                    run(stack.clone(), value_stack);
                 }
             }
         }
@@ -129,7 +123,7 @@ pub fn while_loop(value_stack: &mut Vec<ValueType>) {
 
     if let ValueType::Scope(stack) = arg2 {
         while value_stack[value_stack.len() - 1].truthy() {
-            run_from_ast(stack.clone(), value_stack);
+            run(stack.clone(), value_stack);
         }
     }
 }

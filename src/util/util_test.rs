@@ -9,6 +9,7 @@ fn test_log_debug_macro() {
 
         5
     }
+
     let result = log_debug_time!(expensive_operation(), "Expensive operation");
 
     assert_eq!(5, result);
@@ -17,6 +18,8 @@ fn test_log_debug_macro() {
 #[test]
 fn test_find_closing_bracket() {
     let src = "{1 2 3 {*} true if {*} false if}";
+
     assert_eq!(find_closing_bracket(&src[1..]), 31);
+
     println!("{}", &src[1..31]);
 }

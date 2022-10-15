@@ -4,13 +4,16 @@ mod runtime_test;
 mod executors;
 
 use self::executors::*;
-use crate::{ast::operation_extracts::*, ast::ValueType, Stack};
+use crate::{
+    ast::{extract::operation::*, ValueType},
+    Stack,
+};
 
-pub fn run_from_ast<'a>(stack: Vec<Stack<'a>>, value_stack: &mut Vec<ValueType<'a>>) {
-    for elem in stack.into_iter() {
-        match elem {
+pub fn run<'a>(stack: Vec<Stack<'a>>, value_stack: &mut Vec<ValueType<'a>>) {
+    for element in stack.into_iter() {
+        match element {
             Stack::Operation(operation) => execute_operation(value_stack, operation),
-            Stack::Value(val) => value_stack.push(val),
+            Stack::Value(value) => value_stack.push(value),
         }
     }
 }

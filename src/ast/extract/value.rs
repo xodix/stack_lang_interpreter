@@ -1,7 +1,6 @@
-use crate::{util::find_closing_bracket, Stack, UserDefinitions};
 use std::{error::Error, fmt::Display};
 
-use super::fill_ast;
+use crate::{util::find_closing_bracket, Stack, UserDefinitions};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ValueType<'a> {
@@ -44,7 +43,7 @@ impl Display for ValueType<'_> {
     }
 }
 
-pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
+pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     let mut num = String::new();
     let mut index = 0;
     let is_float = src.contains('.');
@@ -83,7 +82,7 @@ pub fn extract_num(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     }
 }
 
-pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
+pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     let word_end = src[1..]
         .find('\"')
         .unwrap_or_else(|| panic!("Could not find end of string that started at {i} character."));
@@ -101,30 +100,26 @@ pub fn extract_string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     *i += word_end + 2;
 }
 
-pub fn extract_scope<'a>(
+pub fn scope<'a>(
     src: &'a str,
     i: &mut usize,
-    user_definitions: UserDefinitions<'a>,
+    user_definitions: &mut UserDefinitions<'a>,
 ) -> Vec<Stack<'a>> {
     let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
-    fill_ast(
-        &src[1..scope_end],
-        &mut scopes_stack,
-        user_definitions.clone(),
-    );
+    crate::ast::fill(&src[1..scope_end], &mut scopes_stack, user_definitions);
 
     *i += scope_end + 1;
 
     scopes_stack
 }
 
-pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
+pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: &mut UserDefinitions<'a>) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(ValueType::Scope(contents)) => {
-                user_definitions.borrow_mut().insert(name, contents);
+                user_definitions.insert(name, contents);
             }
             val => {
                 panic!("Expected Scope, but got {:?}", val);
@@ -134,13 +129,14 @@ pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefi
     }
 }
 
-pub fn register_constant<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
+pub fn register_constant<'a>(
+    stack: &mut Vec<Stack<'a>>,
+    user_definitions: &mut UserDefinitions<'a>,
+) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(val) => {
-                user_definitions
-                    .borrow_mut()
-                    .insert(name, vec![Stack::Value(val)]);
+                user_definitions.insert(name, vec![Stack::Value(val)]);
             }
             val => {
                 panic!("Expected Value, but got {:?}", val);
