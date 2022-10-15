@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
 use crate::{
     ast::extract::{operation::*, value::*},
@@ -8,10 +8,10 @@ use crate::{
 #[test]
 fn test_extract_operation() {
     let mut stack = vec![Stack::Value(ValueType::Int(3))];
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
     let mut current_index = 0;
 
-    keyword("+", &mut stack, &mut current_index, user_definitions);
+    keyword("+", &mut stack, &mut current_index, &mut user_definitions);
 
     assert_eq!(
         vec![Stack::Value(ValueType::Int(3)), Stack::Operation(ADD)],
@@ -25,14 +25,14 @@ fn test_extract_operation() {
 #[should_panic]
 fn test_extract_unknown_operation() {
     let mut stack = vec![Stack::Value(ValueType::Int(3))];
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
     let mut current_index = 0;
 
     keyword(
         "unknown_operand",
         &mut stack,
         &mut current_index,
-        user_definitions,
+        &mut user_definitions,
     );
 
     assert_eq!(
@@ -103,13 +103,13 @@ fn test_extract_string() {
 #[test]
 fn test_extract_scope() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
     let mut current_index = 0;
 
     stack.push(Stack::Value(ValueType::Scope(scope(
         r#"{*}"#,
         &mut current_index,
-        user_definitions,
+        &mut user_definitions,
     ))));
 
     assert_eq!(
@@ -134,15 +134,13 @@ fn test_register_function() {
         Stack::Value(ValueType::Text("double".to_string())),
     ];
 
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
 
-    register_macro(&mut stack, user_definitions.clone());
+    register_macro(&mut stack, &mut user_definitions);
 
-    assert!(user_definitions
-        .borrow()
-        .contains_key(&"double".to_string()));
+    assert!(user_definitions.contains_key(&"double".to_string()));
 
-    keyword("double", &mut stack, &mut 0, user_definitions.clone());
+    keyword("double", &mut stack, &mut 0, &mut user_definitions);
 
     assert_eq!(
         vec![
@@ -162,13 +160,13 @@ fn test_register_constant() {
         Stack::Value(ValueType::Text("FIVE".to_string())),
     ];
 
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
 
-    register_constant(&mut stack, user_definitions.clone());
+    register_constant(&mut stack, &mut user_definitions);
 
-    assert!(user_definitions.borrow().contains_key(&"FIVE".to_string()));
+    assert!(user_definitions.contains_key(&"FIVE".to_string()));
 
-    keyword("FIVE", &mut stack, &mut 0, user_definitions.clone());
+    keyword("FIVE", &mut stack, &mut 0, &mut user_definitions);
 
     assert_eq!(
         vec![

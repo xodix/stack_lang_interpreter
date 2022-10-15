@@ -103,27 +103,23 @@ pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 pub fn scope<'a>(
     src: &'a str,
     i: &mut usize,
-    user_definitions: UserDefinitions<'a>,
+    user_definitions: &mut UserDefinitions<'a>,
 ) -> Vec<Stack<'a>> {
     let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
-    crate::ast::fill(
-        &src[1..scope_end],
-        &mut scopes_stack,
-        user_definitions.clone(),
-    );
+    crate::ast::fill(&src[1..scope_end], &mut scopes_stack, user_definitions);
 
     *i += scope_end + 1;
 
     scopes_stack
 }
 
-pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
+pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: &mut UserDefinitions<'a>) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(ValueType::Scope(contents)) => {
-                user_definitions.borrow_mut().insert(name, contents);
+                user_definitions.insert(name, contents);
             }
             val => {
                 panic!("Expected Scope, but got {:?}", val);
@@ -133,13 +129,14 @@ pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefi
     }
 }
 
-pub fn register_constant<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: UserDefinitions<'a>) {
+pub fn register_constant<'a>(
+    stack: &mut Vec<Stack<'a>>,
+    user_definitions: &mut UserDefinitions<'a>,
+) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(val) => {
-                user_definitions
-                    .borrow_mut()
-                    .insert(name, vec![Stack::Value(val)]);
+                user_definitions.insert(name, vec![Stack::Value(val)]);
             }
             val => {
                 panic!("Expected Value, but got {:?}", val);

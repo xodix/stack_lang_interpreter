@@ -78,7 +78,7 @@ pub fn keyword<'a>(
     src: &'a str,
     stack: &mut Vec<Stack<'a>>,
     i: &mut usize,
-    user_definitions: crate::UserDefinitions<'a>,
+    user_definitions: &mut crate::UserDefinitions<'a>,
 ) {
     let presumable_operand_index = src
         .find(|c| c == ' ' || c == '\n' || c == '\r')
@@ -94,10 +94,7 @@ pub fn keyword<'a>(
         } else {
             stack.push(Stack::Operation(presumable_keyword));
         }
-    } else if let Some(function) = user_definitions
-        .borrow()
-        .get(&presumable_keyword.to_string())
-    {
+    } else if let Some(function) = user_definitions.get(&presumable_keyword.to_string()) {
         stack.extend_from_slice(function);
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
         stack.push(Stack::Value(value.clone()));

@@ -3,9 +3,9 @@ mod runtime;
 mod util;
 
 pub use ast::ValueType;
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
-pub type UserDefinitions<'a> = Rc<RefCell<HashMap<String, Vec<Stack<'a>>>>>;
+pub type UserDefinitions<'a> = HashMap<String, Vec<Stack<'a>>>;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Stack<'a> {
@@ -26,9 +26,9 @@ fn main() {
 }
 
 fn parse<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
-    let user_definitions = Rc::new(RefCell::new(HashMap::new()));
+    let mut user_definitions = HashMap::new();
 
-    log_debug_time!(ast::fill(src, stack, user_definitions), "Parsing src");
+    log_debug_time!(ast::fill(src, stack, &mut user_definitions), "Parsing src");
 }
 
 fn run(stack: Vec<Stack>) -> Vec<ValueType> {
