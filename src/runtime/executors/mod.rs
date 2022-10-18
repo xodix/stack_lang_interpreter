@@ -100,8 +100,6 @@ pub fn for_loop(value_stack: &mut Vec<ValueType>) {
     let condition = value_stack.pop().unwrap();
     let scope = value_stack.pop().unwrap();
 
-    value_stack.push(condition.clone());
-
     match condition {
         ValueType::Int(range) => {
             if let ValueType::Scope(stack) = scope {

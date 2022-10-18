@@ -1,4 +1,4 @@
-3 "N_SPACES" const // number of spaces (rows of stars)
+5 "N_SPACES" const // number of spaces (rows of stars)
 
 1 // number of stars
 N_SPACES 
@@ -6,18 +6,21 @@ N_SPACES
 {
 	pop
 
+	copy
+	
 	{
 		" " print pop
 	}
 	switch for
-	
+
 	switch
 
+	copy
 	{
 		"*" print pop
 	}
 	switch for
-
+	
 	switch
 	
 	"" println pop
@@ -37,4 +40,4 @@ N_SPACES
 	} N_SPACES for
 
 	"*" println pop
-} 1 N_SPACES - for
+} 2 N_SPACES / for

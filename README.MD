@@ -17,6 +17,17 @@ My goal in creating this project is to expand my horizons on new types of progra
 
 Creating your programming language helps with rapidly learning others.
 
+# Roadmap
+
+1. QoL improvements.
+2. Optimization.
+3. Interpreter compilation to WASM.
+4. Interactive demo website.
+5. Full lexical analysis.
+6. LLVM compilation:
+   - Syntax analysis.
+   - Optimization.
+
 # How to run
 
 ## Download:
@@ -72,7 +83,7 @@ Prints `3` to standard output.
 1 2 + 3 * print_debug
 ```
 
-Prints `Int(9)` to standard output because `1 + 2 = 3` and `3 \* 3 = 9`.
+Prints `Int(9)` to standard output because `2 + 1 = 3` and `3 * 3 = 9`.
 
 The same operation can be written as:
 
@@ -82,7 +93,9 @@ The same operation can be written as:
 
 How?
 
-The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next, it sees '\*' and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
+The stack contains [3, 1, 2]. When the interpreter encounters a `+` it takes **two top elements** and adds them together. Next, it sees `*` and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
+
+Math is executed in: `last_value` `operator` `next_to_last_value` order, where operator is either `+`, `-`, `*`, `/`, or `%`.
 
 ## Comments
 
