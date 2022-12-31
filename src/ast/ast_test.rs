@@ -14,11 +14,14 @@ fn test_extract_operation() {
     keyword("+", &mut stack, &mut current_index, &mut user_definitions);
 
     assert_eq!(
-        vec![Stack::Value(ValueType::Int(3)), Stack::Operation(ADD)],
+        vec![
+            Stack::Value(ValueType::Int(3)),
+            Stack::Operation(OperationType::Add)
+        ],
         stack
     );
 
-    assert_eq!(current_index, 1);
+    assert_eq!(current_index, 0);
 }
 
 #[test]
@@ -35,13 +38,7 @@ fn test_extract_unknown_operation() {
         &mut user_definitions,
     );
 
-    assert_eq!(
-        vec![
-            Stack::Value(ValueType::Int(3)),
-            Stack::Operation("unknown_operand")
-        ],
-        stack
-    );
+    assert_eq!(vec![Stack::Value(ValueType::Int(3))], stack);
 
     assert_eq!(current_index, 15);
 }
@@ -61,7 +58,7 @@ fn test_extract_int() {
         stack
     );
 
-    assert_eq!(current_index, 9);
+    assert_eq!(current_index, 8);
 }
 
 #[test]
@@ -79,7 +76,7 @@ fn test_extract_float() {
         stack
     );
 
-    assert_eq!(current_index, 10);
+    assert_eq!(current_index, 9);
 }
 
 #[test]
@@ -97,7 +94,7 @@ fn test_extract_string() {
         stack
     );
 
-    assert_eq!(current_index, 7);
+    assert_eq!(current_index, 6);
 }
 
 #[test]
@@ -115,7 +112,7 @@ fn test_extract_scope() {
     assert_eq!(
         vec![
             Stack::Value(ValueType::Int(4)),
-            Stack::Value(ValueType::Scope(vec![Stack::Operation(MUL)])),
+            Stack::Value(ValueType::Scope(vec![Stack::Operation(OperationType::Mul)])),
         ],
         stack
     );
@@ -129,7 +126,7 @@ fn test_register_function() {
         Stack::Value(ValueType::Int(4)),
         Stack::Value(ValueType::Scope(vec![
             Stack::Value(ValueType::Int(2)),
-            Stack::Operation(MUL),
+            Stack::Operation(OperationType::Mul),
         ])),
         Stack::Value(ValueType::Text("double".to_string())),
     ];
@@ -146,7 +143,7 @@ fn test_register_function() {
         vec![
             Stack::Value(ValueType::Int(4)),
             Stack::Value(ValueType::Int(2)),
-            Stack::Operation(MUL),
+            Stack::Operation(OperationType::Mul),
         ],
         stack
     );
