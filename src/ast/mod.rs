@@ -15,15 +15,13 @@ pub fn fill<'a>(
 ) {
     let chars: Vec<char> = src.chars().collect();
     let mut i = 0;
-    // let mut line = 1;
-    // let mut char = 1;
 
     while i < chars.len() {
         let ch = chars[i];
 
         match ch {
             ' ' => (),
-            // '\n' => line += 1,
+            '\n' => (),
             '\r' => (),
             '\t' => (),
 
