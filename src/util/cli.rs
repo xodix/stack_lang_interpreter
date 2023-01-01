@@ -1,19 +1,17 @@
-use std::path::PathBuf;
-
-use clap::{Parser, Subcommand};
-
 use crate::ExecutionMode;
+use clap::*;
+use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[command(name = "stack_lang")]
 #[command(about = "Compiler and interpreter for stack_lang.", long_about = None)]
 struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    command: Command,
 }
 
 #[derive(Debug, Subcommand)]
-enum Commands {
+enum Command {
     /// Run code.
     #[command(arg_required_else_help = true)]
     Run {
@@ -38,16 +36,16 @@ enum Commands {
 }
 
 pub fn get_execution_mode() -> crate::ExecutionMode {
-    let args = Cli::parse();
+    let cli = Cli::parse();
 
-    match args.command {
-        Commands::Run { bin, path } => {
+    match cli.command {
+        Command::Run { bin, path } => {
             if bin {
                 ExecutionMode::RunBinary(path)
             } else {
                 ExecutionMode::Run(path)
             }
         }
-        Commands::Build { output, input_file } => ExecutionMode::Build(input_file, output),
+        Command::Build { output, input_file } => ExecutionMode::Build(input_file, output),
     }
 }

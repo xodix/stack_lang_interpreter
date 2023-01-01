@@ -4,9 +4,8 @@ mod util;
 
 use ast::extract::operation::OperationType;
 pub use ast::ValueType;
-use std::{collections::HashMap, path::PathBuf, str::FromStr};
-
-use crate::util::{cli, extract_src_bin, extract_src_text, write_file_bin};
+use std::{collections::HashMap, path::PathBuf};
+use util::*;
 
 #[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BinaryFile {
@@ -54,10 +53,7 @@ fn main() {
             let bytes =
                 postcard::to_allocvec(&bin).expect("Couldn't convert stack to binary file.");
 
-            write_file_bin(
-                bytes,
-                output_file.unwrap_or(PathBuf::from_str("a.out").expect("Could not build path")),
-            );
+            write_file_bin(bytes, output_file.unwrap_or(PathBuf::from("a.out")));
 
             Vec::new()
         }
