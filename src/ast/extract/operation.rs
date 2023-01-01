@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use super::value::{register_constant, register_macro};
 use crate::{Stack, ValueType};
@@ -38,37 +38,68 @@ pub const COPY: &str = "copy";
 pub const MACRO: &str = "macro";
 pub const CONST: &str = "const";
 
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum OperationType {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    Pow,
+    Print,
+    PrintDebug,
+    PrintDebugStack,
+    If,
+    Lt,
+    Gt,
+    Eq,
+    Leq,
+    Geq,
+    Or,
+    And,
+    For,
+    While,
+    Switch,
+    Reverse,
+    Pop,
+    Not,
+    Copy,
+    Println,
+    Macro,
+    Const,
+}
+
 lazy_static! {
-    static ref OPERANDS: HashSet<&'static str> = HashSet::from([
-        ADD,
-        SUB,
-        MUL,
-        DIV,
-        MOD,
-        POW,
-        PRINT,
-        PRINT_DEBUG,
-        PRINT_DEBUG_STACK,
-        IF,
-        LT,
-        GT,
-        EQ,
-        LEQ,
-        GEQ,
-        OR,
-        AND,
-        FOR,
-        WHILE,
-        SWITCH,
-        REVERSE,
-        POP,
-        NOT,
-        COPY,
-        PRINTLN,
-        MACRO,
-        CONST
+    static ref OPERANDS: HashMap<&'static str, OperationType> = HashMap::from([
+        (ADD, OperationType::Add),
+        (SUB, OperationType::Sub),
+        (MUL, OperationType::Mul),
+        (DIV, OperationType::Div),
+        (MOD, OperationType::Mod),
+        (POW, OperationType::Pow),
+        (PRINT, OperationType::Print),
+        (PRINT_DEBUG, OperationType::PrintDebug),
+        (PRINT_DEBUG_STACK, OperationType::PrintDebugStack),
+        (IF, OperationType::If),
+        (LT, OperationType::Lt),
+        (GT, OperationType::Gt),
+        (EQ, OperationType::Eq),
+        (LEQ, OperationType::Leq),
+        (GEQ, OperationType::Geq),
+        (OR, OperationType::Or),
+        (AND, OperationType::And),
+        (FOR, OperationType::For),
+        (WHILE, OperationType::While),
+        (SWITCH, OperationType::Switch),
+        (REVERSE, OperationType::Reverse),
+        (POP, OperationType::Pop),
+        (NOT, OperationType::Not),
+        (COPY, OperationType::Copy),
+        (PRINTLN, OperationType::Println),
+        (MACRO, OperationType::Macro),
+        (CONST, OperationType::Const),
     ]);
-    static ref KEYWORDS: HashMap<&'static str, ValueType<'static>> = HashMap::from([
+    static ref KEYWORDS: HashMap<&'static str, ValueType> = HashMap::from([
         ("true", ValueType::Bool(true)),
         ("false", ValueType::Bool(false))
     ]);
@@ -76,23 +107,23 @@ lazy_static! {
 
 pub fn keyword<'a>(
     src: &'a str,
-    stack: &mut Vec<Stack<'a>>,
+    stack: &mut Vec<Stack>,
     i: &mut usize,
-    user_definitions: &mut crate::UserDefinitions<'a>,
+    user_definitions: &mut crate::HashMap<String, Vec<Stack>>,
 ) {
     let presumable_operand_index = src
         .find(|c| c == ' ' || c == '\n' || c == '\r')
         .unwrap_or(src.len());
-    *i += presumable_operand_index;
+    *i += presumable_operand_index - 1;
     let presumable_keyword = &src[..presumable_operand_index];
 
-    if OPERANDS.contains(&presumable_keyword) {
-        if presumable_keyword == MACRO {
+    if let Some(operation_type) = OPERANDS.get(&presumable_keyword) {
+        if *operation_type == OperationType::Macro {
             register_macro(stack, user_definitions);
-        } else if presumable_keyword == CONST {
+        } else if *operation_type == OperationType::Const {
             register_constant(stack, user_definitions);
         } else {
-            stack.push(Stack::Operation(presumable_keyword));
+            stack.push(Stack::Operation(operation_type.clone()));
         }
     } else if let Some(function) = user_definitions.get(&presumable_keyword.to_string()) {
         stack.extend_from_slice(function);

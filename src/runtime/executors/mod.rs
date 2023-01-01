@@ -52,22 +52,22 @@ pub fn modulo(stack: &mut Vec<ValueType>) {
 pub fn print(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
-    let arg1 = &stack[stack.len() - 1];
-    print!("{}", arg1);
+    let value = &stack[stack.len() - 1];
+    print!("{}", value);
 }
 
 pub fn println(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
-    let arg1 = &stack[stack.len() - 1];
-    println!("{}", arg1);
+    let value = &stack[stack.len() - 1];
+    println!("{}", value);
 }
 
 pub fn print_debug(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
-    let arg1 = &stack[stack.len() - 1];
-    println!("{:?} is {} element in the stack", arg1, stack.len())
+    let value = &stack[stack.len() - 1];
+    println!("{:?} is {} element in the stack", value, stack.len())
 }
 
 pub fn print_debug_stack(stack: &mut Vec<ValueType>) {
@@ -79,16 +79,16 @@ pub fn print_debug_stack(stack: &mut Vec<ValueType>) {
 pub fn if_statement(value_stack: &mut Vec<ValueType>) {
     check_argument_count(value_stack, 2);
 
-    let arg1 = value_stack.pop().unwrap();
-    let arg2 = value_stack.pop().unwrap();
+    let condition = value_stack.pop().unwrap();
+    let scope = value_stack.pop().unwrap();
 
-    if arg1.truthy() {
-        if let ValueType::Scope(stack) = arg2 {
+    if condition.truthy() {
+        if let ValueType::Scope(stack) = scope {
             run(stack, value_stack);
         } else {
             panic!(
                 "{:?} is not a scope. Scope is needed for the if statement",
-                arg2
+                scope
             );
         }
     }
@@ -97,31 +97,31 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) {
 pub fn for_loop(value_stack: &mut Vec<ValueType>) {
     check_argument_count(value_stack, 2);
 
-    let arg1 = value_stack.pop().unwrap();
-    let arg2 = value_stack.pop().unwrap();
+    let condition = value_stack.pop().unwrap();
+    let scope = value_stack.pop().unwrap();
 
-    match arg1 {
+    match condition {
         ValueType::Int(range) => {
-            if let ValueType::Scope(stack) = arg2 {
+            if let ValueType::Scope(stack) = scope {
                 for _ in 0..range {
                     // The scope is copied for every iteration. NOT GOOD
                     run(stack.clone(), value_stack);
                 }
             }
         }
-        _ => panic!("{:?} cannot be a range for the for loop.", arg1),
+        _ => panic!("{:?} cannot be a range for the for loop.", condition),
     }
 }
 
 pub fn while_loop(value_stack: &mut Vec<ValueType>) {
     check_argument_count(value_stack, 2);
 
-    let arg1 = value_stack.pop().unwrap();
-    let arg2 = value_stack.pop().unwrap();
+    let condition = value_stack.pop().unwrap();
+    let scope = value_stack.pop().unwrap();
 
-    value_stack.push(arg1);
+    value_stack.push(condition);
 
-    if let ValueType::Scope(stack) = arg2 {
+    if let ValueType::Scope(stack) = scope {
         while value_stack[value_stack.len() - 1].truthy() {
             run(stack.clone(), value_stack);
         }
@@ -156,11 +156,11 @@ pub fn geq(stack: &mut Vec<ValueType>) {
 pub fn or(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 2);
 
-    let arg1 = stack.pop().unwrap();
+    let condition1 = stack.pop().unwrap();
 
-    let arg2 = stack.pop().unwrap();
+    let condition2 = stack.pop().unwrap();
 
-    if arg1.truthy() || arg2.truthy() {
+    if condition1.truthy() || condition2.truthy() {
         stack.push(ValueType::Bool(true));
     } else {
         stack.push(ValueType::Bool(false));
@@ -170,11 +170,11 @@ pub fn or(stack: &mut Vec<ValueType>) {
 pub fn and(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 2);
 
-    let arg1 = stack.pop().unwrap();
+    let condition1 = stack.pop().unwrap();
 
-    let arg2 = stack.pop().unwrap();
+    let condition2 = stack.pop().unwrap();
 
-    if arg1.truthy() && arg2.truthy() {
+    if condition1.truthy() && condition2.truthy() {
         stack.push(ValueType::Bool(true));
     } else {
         stack.push(ValueType::Bool(false));
@@ -184,10 +184,10 @@ pub fn and(stack: &mut Vec<ValueType>) {
 pub fn not(stack: &mut Vec<ValueType>) {
     check_argument_count(stack, 1);
 
-    let arg1 = stack.pop().unwrap();
+    let condition = stack.pop().unwrap();
 
-    stack.push(if arg1.truthy() {
-        match arg1 {
+    stack.push(if condition.truthy() {
+        match condition {
             ValueType::Int(_) => ValueType::Int(0),
             ValueType::Float(_) => ValueType::Float(0.0),
             ValueType::Text(_) => ValueType::Text("".to_string()),
@@ -195,7 +195,7 @@ pub fn not(stack: &mut Vec<ValueType>) {
             ValueType::Bool(_) => ValueType::Bool(false),
         }
     } else {
-        match arg1 {
+        match condition {
             ValueType::Int(_) => ValueType::Int(1),
             ValueType::Float(_) => ValueType::Float(1.0),
             ValueType::Text(_) => ValueType::Text("true".to_string()),

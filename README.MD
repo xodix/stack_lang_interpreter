@@ -1,21 +1,26 @@
 # Stack lang
 
-Stack lang is an interpreted programming language based on the concept of a stack.
+Stack lang is an interpreted/compiled programming language based on the concept of a stack.
 
 It takes heavy inspiration from postscript and forth.
 
-Creating a new programing language may seem like a daunting task. However, it is quite simple.
-
-In the case of interpreted languages (ones not compiled to machine code), it is simply a process of:
-
-1. Parsing the source code into AST (Asynchronous Syntax Tree).
-2. Executing the code from it.
-
 # Goals
 
-My goal in creating this project is to expand my horizons on new types of programming paradigms. This project also serves as a reminder that programming languages are just programs that turn text into instructions on a CPU.
+My goal in creating this project is to expand students horizons on new types of programming paradigms. This project also serves as a reminder that programming languages are just programs that turn text into instructions on a CPU.
 
 Creating your programming language helps with rapidly learning others.
+
+# Roadmap
+
+1. QoL improvements. ✅
+2. Optimization. ✅
+3. Compiling to custom binary format. ✅
+4. Optimization during compilation (middleware). ⏳
+5. Interpreter compilation to WASM. ⏳⏳
+6. Interactive demo website. ⏳⏳
+7. LLVM compilation: ⏳⏳⏳ (Approximately never)
+   - Syntax analysis.
+   - Optimization.
 
 # How to run
 
@@ -40,23 +45,24 @@ git clone "https://github.com/xodix/stack_lang_compiler.git"
 cd stack_lang_compile
 ```
 
-# Running
+## Command usage
 
-## When using released binary:
-
-```sh
-./stack_lang_compiler.exe examples/fizzbuzz.sl
 ```
+Usage: stack_lang.exe <COMMAND>
 
-'examples/fizzbuzz.sl' can be replaced with a path to a different file.
+Commands:
+  run    Run code
+  build  Build code to binary format
+  help   Print this message or the help of the given subcommand(s)
 
-## When using source code enter:
+Options:
+  -h, --help  Print help information
 
-```sh
-cargo run --release examples/fizzbuzz.sl
+Running source code: stack_lang.exe run <PATH>
+Running binary file: stack_lang.exe run --bin <PATH>
+
+Building source code: stack_lang.exe build <PATH>
 ```
-
-'examples/fizzbuzz.sl' can be replaced with a path to a different file.
 
 # Syntax with examples:
 
@@ -72,7 +78,7 @@ Prints `3` to standard output.
 1 2 + 3 * print_debug
 ```
 
-Prints `Int(9)` to standard output because `1 + 2 = 3` and `3 \* 3 = 9`.
+Prints `Int(9)` to standard output because `2 + 1 = 3` and `3 * 3 = 9`.
 
 The same operation can be written as:
 
@@ -82,7 +88,9 @@ The same operation can be written as:
 
 How?
 
-The stack contains [3, 2, 1]. When the interpreter encounters a '+' it takes **two top elements** and adds them together. Next, it sees '\*' and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
+The stack contains [3, 1, 2]. When the interpreter encounters a `+` it takes **two top elements** and adds them together. Next, it sees `*` and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
+
+Math is executed in: `last_value` `operator` `next_to_last_value` order, where operator is either `+`, `-`, `*`, `/`, or `%`.
 
 ## Comments
 

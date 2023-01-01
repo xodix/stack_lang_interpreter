@@ -4,13 +4,14 @@ pub mod extract;
 
 mod comments;
 
-use crate::{Stack, UserDefinitions};
-pub use extract::value::ValueType;
+use crate::Stack;
+pub use extract::{operation::OperationType, value::ValueType};
+use std::collections::HashMap;
 
 pub fn fill<'a>(
     src: &'a str,
-    stack: &mut Vec<Stack<'a>>,
-    user_definitions: &mut UserDefinitions<'a>,
+    stack: &mut Vec<Stack>,
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
 ) {
     let chars: Vec<char> = src.chars().collect();
     let mut i = 0;
@@ -30,7 +31,7 @@ pub fn fill<'a>(
                 } else if chars[i + 1] == '/' {
                     comments::skip_singleline(&src[i..], &mut i);
                 } else {
-                    stack.push(Stack::Operation("/"))
+                    stack.push(Stack::Operation(OperationType::Div))
                 }
             }
 

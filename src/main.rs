@@ -2,30 +2,68 @@ mod ast;
 mod runtime;
 mod util;
 
+use ast::extract::operation::OperationType;
 pub use ast::ValueType;
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
+use util::*;
 
-pub type UserDefinitions<'a> = HashMap<String, Vec<Stack<'a>>>;
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BinaryFile {
+    stack: Vec<Stack>,
+}
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum Stack<'a> {
-    Value(ValueType<'a>),
-    Operation(&'a str),
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+pub enum Stack {
+    Value(ValueType),
+    Operation(OperationType),
+}
+
+pub enum ExecutionMode {
+    Run(PathBuf),
+    RunBinary(PathBuf),
+    Build(PathBuf, Option<PathBuf>),
 }
 
 fn main() {
-    let src = log_debug_time!(util::extract_src(), "Getting src from file");
+    let execution_mode = cli::get_execution_mode();
 
-    let mut stack = Vec::new();
+    let leftover_stack = match execution_mode {
+        ExecutionMode::Run(path) => {
+            let mut stack = Vec::new();
 
-    parse(&src, &mut stack);
-    let leftover_stack = run(stack);
+            let src = extract_src_text(path);
+            parse(&src, &mut stack);
+
+            run(stack)
+        }
+        ExecutionMode::RunBinary(path) => {
+            let src = extract_src_bin(path);
+            let bin: BinaryFile =
+                postcard::from_bytes(&src).expect("Binary file format is not valid.");
+
+            run(bin.stack)
+        }
+        ExecutionMode::Build(input_file, output_file) => {
+            let mut stack = Vec::new();
+
+            let src = extract_src_text(input_file);
+            parse(&src, &mut stack);
+
+            let bin = BinaryFile { stack };
+            let bytes =
+                postcard::to_allocvec(&bin).expect("Couldn't convert stack to binary file.");
+
+            write_file_bin(bytes, output_file.unwrap_or(PathBuf::from("a.out")));
+
+            Vec::new()
+        }
+    };
 
     #[cfg(debug_assertions)]
     println!("{:?}", leftover_stack);
 }
 
-fn parse<'a>(src: &'a str, stack: &mut Vec<Stack<'a>>) {
+fn parse<'a>(src: &'a str, stack: &mut Vec<Stack>) {
     let mut user_definitions = HashMap::new();
 
     log_debug_time!(ast::fill(src, stack, &mut user_definitions), "Parsing src");

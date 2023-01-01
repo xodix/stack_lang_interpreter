@@ -1,17 +1,17 @@
-use std::{error::Error, fmt::Display};
+use std::{collections::HashMap, error::Error, fmt::Display};
 
-use crate::{util::find_closing_bracket, Stack, UserDefinitions};
+use crate::{util::find_closing_bracket, Stack};
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum ValueType<'a> {
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum ValueType {
     Int(i32),
     Float(f32),
     Text(String),
-    Scope(Vec<Stack<'a>>),
+    Scope(Vec<Stack>),
     Bool(bool),
 }
 
-impl<'a> ValueType<'a> {
+impl ValueType {
     pub fn truthy(&self) -> bool {
         match self {
             ValueType::Int(number) => *number != 0,
@@ -23,7 +23,7 @@ impl<'a> ValueType<'a> {
     }
 }
 
-impl Display for ValueType<'_> {
+impl Display for ValueType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Int(int) => write!(f, "{}", int)?,
@@ -59,7 +59,7 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
         }
     }
 
-    *i += index;
+    *i += index - 1;
 
     fn extract_panic(e: Box<dyn Error>, i: usize) {
         panic!("Could not extract number on character {}, {e}", i);
@@ -97,14 +97,14 @@ pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 
     stack.push(Stack::Value(ValueType::Text(word)));
 
-    *i += word_end + 2;
+    *i += word_end + 1;
 }
 
 pub fn scope<'a>(
     src: &'a str,
     i: &mut usize,
-    user_definitions: &mut UserDefinitions<'a>,
-) -> Vec<Stack<'a>> {
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
+) -> Vec<Stack> {
     let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
@@ -115,7 +115,10 @@ pub fn scope<'a>(
     scopes_stack
 }
 
-pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: &mut UserDefinitions<'a>) {
+pub fn register_macro<'a>(
+    stack: &mut Vec<Stack>,
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
+) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(ValueType::Scope(contents)) => {
@@ -130,8 +133,8 @@ pub fn register_macro<'a>(stack: &mut Vec<Stack<'a>>, user_definitions: &mut Use
 }
 
 pub fn register_constant<'a>(
-    stack: &mut Vec<Stack<'a>>,
-    user_definitions: &mut UserDefinitions<'a>,
+    stack: &mut Vec<Stack>,
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
 ) {
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
