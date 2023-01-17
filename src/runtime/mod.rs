@@ -9,19 +9,25 @@ use crate::{
         extract::operation::OperationType::{self, *},
         ValueType,
     },
+    util::error,
     Stack,
 };
 
-pub fn run<'a>(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) {
+pub fn run(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
     for element in stack.into_iter() {
         match element {
-            Stack::Operation(operation) => execute_operation(value_stack, operation),
+            Stack::Operation(operation) => execute_operation(value_stack, operation)?,
             Stack::Value(value) => value_stack.push(value),
         }
     }
+
+    Ok(())
 }
 
-fn execute_operation(stack: &mut Vec<ValueType>, operation: OperationType) {
+fn execute_operation(
+    stack: &mut Vec<ValueType>,
+    operation: OperationType,
+) -> Result<(), error::RuntimeError> {
     match operation {
         Add => add(stack),
         Sub => sub(stack),
@@ -53,6 +59,6 @@ fn execute_operation(stack: &mut Vec<ValueType>, operation: OperationType) {
         Reverse => reverse(stack),
         Pop => pop(stack),
         Copy => copy(stack),
-        _ => panic!("Invalid operation `{:?}`.", operation),
+        _ => Err(error::RuntimeError::InvalidOperation { operation }),
     }
 }

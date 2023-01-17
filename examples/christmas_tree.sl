@@ -25,7 +25,7 @@ N_SPACES
 	
 	"" println pop
 
-	1 switch -
+	1 -
 	switch
 
 	2 switch +
@@ -40,4 +40,4 @@ N_SPACES
 	} N_SPACES for
 
 	"*" println pop
-} 2 N_SPACES / for
+} N_SPACES 2 / for

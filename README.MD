@@ -90,7 +90,7 @@ How?
 
 The stack contains [3, 1, 2]. When the interpreter encounters a `+` it takes **two top elements** and adds them together. Next, it sees `*` and multiplies [3, 3]. That leaves us with [9], which is 'print'-ed.
 
-Math is executed in: `last_value` `operator` `next_to_last_value` order, where operator is either `+`, `-`, `*`, `/`, or `%`.
+Math is executed in: `next_to_last_value` `operator` `last_value` order, where operator is either `+`, `-`, `*`, `/`, or `%`.
 
 ## Comments
 
@@ -115,10 +115,10 @@ Prints `3`.
 Prints `6` because the condition 'true' is truthy.
 
 ```
-2.0 3.0 {/} 4 4 - if print
+3.0 2.0 {/} 4 4 - if print
 ```
 
-Prints `1.5` because `4 4 -` evaluates to `0` which is **not truthy**.
+Prints `2.0` because `4 4 -` evaluates to `0` which is **not truthy**.
 
 **Scopes** contain operations and values that can be executed.
 
@@ -233,7 +233,7 @@ Switch takes the top element and switches its value with the second.
 2 1 switch - print
 ```
 
-Prints `1` because `2 - 1 = 1`. Instead of `1 - 2` we get `2 - 1`.
+Prints `-1` because `1 - 2 = -1`. Instead of `2 - 1` we get `1 - 2`.
 
 ### REVERSE
 

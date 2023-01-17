@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use std::collections::HashMap;
 
 use super::value::{register_constant, register_macro};
-use crate::{Stack, ValueType};
+use crate::{util::error, Stack, ValueType};
 
 pub const ADD: &str = "+";
 pub const SUB: &str = "-";
@@ -105,12 +105,12 @@ lazy_static! {
     ]);
 }
 
-pub fn keyword<'a>(
-    src: &'a str,
+pub fn keyword(
+    src: &str,
     stack: &mut Vec<Stack>,
     i: &mut usize,
     user_definitions: &mut crate::HashMap<String, Vec<Stack>>,
-) {
+) -> Result<(), error::ParsingError> {
     let presumable_operand_index = src
         .find(|c| c == ' ' || c == '\n' || c == '\r')
         .unwrap_or(src.len());
@@ -119,9 +119,9 @@ pub fn keyword<'a>(
 
     if let Some(operation_type) = OPERANDS.get(&presumable_keyword) {
         if *operation_type == OperationType::Macro {
-            register_macro(stack, user_definitions);
+            register_macro(stack, user_definitions)?;
         } else if *operation_type == OperationType::Const {
-            register_constant(stack, user_definitions);
+            register_constant(stack, user_definitions)?;
         } else {
             stack.push(Stack::Operation(operation_type.clone()));
         }
@@ -130,6 +130,10 @@ pub fn keyword<'a>(
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
         stack.push(Stack::Value(value.clone()));
     } else if !presumable_keyword.is_empty() {
-        panic!("Unknown keyword: `{presumable_keyword}`");
+        return Err(error::ParsingError::KeywordError {
+            reason: format!("Invalid keyword: `{presumable_keyword}`."),
+        });
     }
+
+    Ok(())
 }

@@ -41,11 +41,14 @@ pub fn get_execution_mode() -> crate::ExecutionMode {
     match cli.command {
         Command::Run { bin, path } => {
             if bin {
-                ExecutionMode::RunBinary(path)
+                ExecutionMode::RunBinary { path }
             } else {
-                ExecutionMode::Run(path)
+                ExecutionMode::Run { path }
             }
         }
-        Command::Build { output, input_file } => ExecutionMode::Build(input_file, output),
+        Command::Build { output, input_file } => ExecutionMode::Build {
+            input_file,
+            output_file: output,
+        },
     }
 }
