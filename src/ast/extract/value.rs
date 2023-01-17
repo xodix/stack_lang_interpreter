@@ -1,6 +1,9 @@
-use std::{collections::HashMap, error::Error, fmt::Display};
+use std::{collections::HashMap, fmt::Display};
 
-use crate::{util::find_closing_bracket, Stack};
+use crate::{
+    util::{error, find_closing_bracket},
+    Stack,
+};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum ValueType {
@@ -43,7 +46,7 @@ impl Display for ValueType {
     }
 }
 
-pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
+pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), error::ParsingError> {
     let mut num = String::new();
     let mut index = 0;
     let is_float = src.contains('.');
@@ -61,31 +64,38 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
 
     *i += index - 1;
 
-    fn extract_panic(e: Box<dyn Error>, i: usize) {
-        panic!("Could not extract number on character {}, {e}", i);
-    }
-
     if is_float {
         let res = num.parse::<f32>();
 
         match res {
-            Ok(num) => stack.push(Stack::Value(ValueType::Float(num))),
-            Err(e) => extract_panic(Box::new(e), *i),
+            Ok(num) => Ok(stack.push(Stack::Value(ValueType::Float(num)))),
+            Err(e) => Err(error::ParsingError::ExtractionError {
+                what: "Float".to_string(),
+                reason: e.to_string(),
+            }),
         }
     } else {
         let res = num.parse::<i32>();
 
         match res {
-            Ok(num) => stack.push(Stack::Value(ValueType::Int(num))),
-            Err(e) => extract_panic(Box::new(e), *i),
+            Ok(num) => Ok(stack.push(Stack::Value(ValueType::Int(num)))),
+            Err(e) => Err(error::ParsingError::ExtractionError {
+                what: "Int".to_string(),
+                reason: e.to_string(),
+            }),
         }
     }
 }
 
-pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
-    let word_end = src[1..]
-        .find('\"')
-        .unwrap_or_else(|| panic!("Could not find end of string that started at {i} character."));
+pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), error::ParsingError> {
+    let word_end = if let Some(end) = src[1..].find('\"') {
+        end
+    } else {
+        return Err(error::ParsingError::ExtractionError {
+            what: "String".to_string(),
+            reason: "Could not find end of string.".to_string(),
+        });
+    };
 
     let word = {
         if word_end == 0 {
@@ -98,53 +108,80 @@ pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) {
     stack.push(Stack::Value(ValueType::Text(word)));
 
     *i += word_end + 1;
+
+    Ok(())
 }
 
-pub fn scope<'a>(
-    src: &'a str,
+pub fn scope(
+    src: &str,
     i: &mut usize,
+    line_width: &mut usize,
+    line_height: &mut usize,
     user_definitions: &mut HashMap<String, Vec<Stack>>,
-) -> Vec<Stack> {
+) -> Result<Vec<Stack>, error::ParsingError> {
     let scope_end = find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
-    crate::ast::fill(&src[1..scope_end], &mut scopes_stack, user_definitions);
+    crate::ast::fill(
+        &src[1..scope_end],
+        &mut scopes_stack,
+        line_height,
+        line_width,
+        user_definitions,
+    )?;
 
     *i += scope_end + 1;
 
-    scopes_stack
+    Ok(scopes_stack)
 }
 
-pub fn register_macro<'a>(
+pub fn register_macro(
     stack: &mut Vec<Stack>,
     user_definitions: &mut HashMap<String, Vec<Stack>>,
-) {
+) -> Result<(), error::ParsingError> {
+    if stack.len() < 2 {
+        return Err(error::ParsingError::RegistrationError {
+            what: "Macro".to_string(),
+            reason: "Not enough arguments.".to_string(),
+        });
+    }
+
     match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(ValueType::Scope(contents)) => {
                 user_definitions.insert(name, contents);
+                Ok(())
             }
-            val => {
-                panic!("Expected Scope, but got {:?}", val);
-            }
+            val => Err(error::ParsingError::MismatchedTypes {
+                expected: "Scope".to_string(),
+                got: format!("{:?}", val),
+            }),
         },
-        val => panic!("Cannot register function named with {:?}", val),
+        val => Err(error::ParsingError::ExtractionError {
+            what: "Function".to_string(),
+            reason: format!("Cannot register function named with {:?}", val),
+        }),
     }
 }
 
-pub fn register_constant<'a>(
+pub fn register_constant(
     stack: &mut Vec<Stack>,
     user_definitions: &mut HashMap<String, Vec<Stack>>,
-) {
-    match stack.pop().unwrap() {
+) -> Result<(), error::ParsingError> {
+    return match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(val) => {
                 user_definitions.insert(name, vec![Stack::Value(val)]);
+                Ok(())
             }
-            val => {
-                panic!("Expected Value, but got {:?}", val);
-            }
+            val => Err(error::ParsingError::MismatchedTypes {
+                expected: "Value".to_string(),
+                got: format!("Expected Value, but got {:?}", val),
+            }),
         },
-        val => panic!("Cannot register a constant named with {:?}", val),
-    }
+        val => Err(error::ParsingError::RegistrationError {
+            what: "Constant".to_string(),
+            reason: format!("Cannot register a constant named with {:?}", val),
+        }),
+    };
 }

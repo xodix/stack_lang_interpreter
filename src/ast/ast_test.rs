@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    ast::extract::{operation::*, value::*},
+    ast::extract::{self, operation::OperationType},
     Stack, ValueType,
 };
 
@@ -11,7 +11,8 @@ fn test_extract_operation() {
     let mut user_definitions = HashMap::new();
     let mut current_index = 0;
 
-    keyword("+", &mut stack, &mut current_index, &mut user_definitions);
+    extract::operation::keyword("+", &mut stack, &mut current_index, &mut user_definitions)
+        .unwrap();
 
     assert_eq!(
         vec![
@@ -31,12 +32,13 @@ fn test_extract_unknown_operation() {
     let mut user_definitions = HashMap::new();
     let mut current_index = 0;
 
-    keyword(
+    extract::operation::keyword(
         "unknown_operand",
         &mut stack,
         &mut current_index,
         &mut user_definitions,
-    );
+    )
+    .unwrap();
 
     assert_eq!(vec![Stack::Value(ValueType::Int(3))], stack);
 
@@ -48,7 +50,7 @@ fn test_extract_int() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
     let mut current_index = 0;
 
-    number("5_6_7_8_9", &mut stack, &mut current_index);
+    extract::value::number("5_6_7_8_9", &mut stack, &mut current_index).unwrap();
 
     assert_eq!(
         vec![
@@ -66,8 +68,7 @@ fn test_extract_float() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
     let mut current_index = 0;
 
-    number("5_6._7_8_9", &mut stack, &mut current_index);
-
+    extract::value::number("5_6._7_8_9", &mut stack, &mut current_index).unwrap();
     assert_eq!(
         vec![
             Stack::Value(ValueType::Int(4)),
@@ -84,7 +85,7 @@ fn test_extract_string() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
     let mut current_index = 0;
 
-    string(r#""Hello""#, &mut stack, &mut current_index);
+    extract::value::string(r#""Hello""#, &mut stack, &mut current_index).unwrap();
 
     assert_eq!(
         vec![
@@ -102,12 +103,19 @@ fn test_extract_scope() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
     let mut user_definitions = HashMap::new();
     let mut current_index = 0;
+    let mut line_height = 0;
+    let mut line_width = 0;
 
-    stack.push(Stack::Value(ValueType::Scope(scope(
-        r#"{*}"#,
-        &mut current_index,
-        &mut user_definitions,
-    ))));
+    stack.push(Stack::Value(ValueType::Scope(
+        extract::value::scope(
+            r#"{*}"#,
+            &mut current_index,
+            &mut line_width,
+            &mut line_height,
+            &mut user_definitions,
+        )
+        .unwrap(),
+    )));
 
     assert_eq!(
         vec![
@@ -121,7 +129,7 @@ fn test_extract_scope() {
 }
 
 #[test]
-fn test_register_function() {
+fn test_register_macro() {
     let mut stack = vec![
         Stack::Value(ValueType::Int(4)),
         Stack::Value(ValueType::Scope(vec![
@@ -133,11 +141,11 @@ fn test_register_function() {
 
     let mut user_definitions = HashMap::new();
 
-    register_macro(&mut stack, &mut user_definitions);
+    extract::value::register_macro(&mut stack, &mut user_definitions).unwrap();
 
     assert!(user_definitions.contains_key(&"double".to_string()));
 
-    keyword("double", &mut stack, &mut 0, &mut user_definitions);
+    extract::operation::keyword("double", &mut stack, &mut 0, &mut user_definitions).unwrap();
 
     assert_eq!(
         vec![
@@ -159,11 +167,11 @@ fn test_register_constant() {
 
     let mut user_definitions = HashMap::new();
 
-    register_constant(&mut stack, &mut user_definitions);
+    extract::value::register_constant(&mut stack, &mut user_definitions).unwrap();
 
     assert!(user_definitions.contains_key(&"FIVE".to_string()));
 
-    keyword("FIVE", &mut stack, &mut 0, &mut user_definitions);
+    extract::operation::keyword("FIVE", &mut stack, &mut 0, &mut user_definitions).unwrap();
 
     assert_eq!(
         vec![

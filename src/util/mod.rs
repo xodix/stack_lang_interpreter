@@ -1,4 +1,5 @@
 pub mod cli;
+pub mod error;
 #[cfg(test)]
 mod util_test;
 
@@ -31,9 +32,7 @@ Macro returns the value of expression.
 #[macro_export]
 macro_rules! log_debug_time {
     ( $function:expr, $what:expr ) => {
-        if
-        /*cfg!(debug_assertions)*/
-        true {
+        if cfg!(debug_assertions) {
             use std::time::Instant;
 
             let now = Instant::now();
