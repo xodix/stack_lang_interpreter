@@ -1,9 +1,6 @@
 use std::{collections::HashMap, fmt::Display};
 
-use crate::{
-    util::{error, find_closing_bracket},
-    Stack,
-};
+use crate::{util::*, Stack};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum ValueType {
@@ -46,10 +43,10 @@ impl Display for ValueType {
     }
 }
 
-pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), error::ParsingError> {
-    let mut num = String::new();
+pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> error::parsing::Result<()> {
+    let mut num = String::with_capacity(40);
     let mut index = 0;
-    let is_float = src.contains('.');
+    let mut is_float = false;
 
     for ch in src.chars() {
         if ch != '-' && ch != '_' && !ch.is_digit(10) && ch != '.' {
@@ -59,6 +56,9 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), er
 
         if ch != '_' {
             num.push(ch);
+        }
+        if ch == '.' {
+            is_float = true;
         }
     }
 
@@ -87,8 +87,14 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), er
     }
 }
 
-pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), error::ParsingError> {
-    let word_end = if let Some(end) = src[1..].find('\"') {
+pub fn string(
+    src: &str,
+    stack: &mut Vec<Stack>,
+    i: &mut usize,
+    line_height: &mut usize,
+    line_width: &mut usize,
+) -> error::parsing::Result<()> {
+    let word_end = if let Some(end) = src[1..].find(|ch| ch == '\"' || ch == '\'') {
         end
     } else {
         return Err(error::ParsingError::ExtractionError {
@@ -97,13 +103,17 @@ pub fn string(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> Result<(), er
         });
     };
 
-    let word = {
-        if word_end == 0 {
-            "".to_string()
-        } else {
-            src[1..word_end + 1].to_string()
-        }
+    let word = if word_end == 0 {
+        "".to_string()
+    } else {
+        src[1..word_end + 1].to_string()
     };
+
+    let lines = word.matches('\n').count();
+    if lines != 0 {
+        *line_height += lines;
+        *line_width = 0;
+    }
 
     stack.push(Stack::Value(ValueType::Text(word)));
 
@@ -118,8 +128,8 @@ pub fn scope(
     line_width: &mut usize,
     line_height: &mut usize,
     user_definitions: &mut HashMap<String, Vec<Stack>>,
-) -> Result<Vec<Stack>, error::ParsingError> {
-    let scope_end = find_closing_bracket(&src[1..]);
+) -> error::parsing::Result<Vec<Stack>> {
+    let scope_end = parsing::find_closing_bracket(&src[1..]);
 
     let mut scopes_stack: Vec<Stack> = Vec::new();
     crate::ast::fill(
@@ -133,55 +143,4 @@ pub fn scope(
     *i += scope_end + 1;
 
     Ok(scopes_stack)
-}
-
-pub fn register_macro(
-    stack: &mut Vec<Stack>,
-    user_definitions: &mut HashMap<String, Vec<Stack>>,
-) -> Result<(), error::ParsingError> {
-    if stack.len() < 2 {
-        return Err(error::ParsingError::RegistrationError {
-            what: "Macro".to_string(),
-            reason: "Not enough arguments.".to_string(),
-        });
-    }
-
-    match stack.pop().unwrap() {
-        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
-            Stack::Value(ValueType::Scope(contents)) => {
-                user_definitions.insert(name, contents);
-                Ok(())
-            }
-            val => Err(error::ParsingError::MismatchedTypes {
-                expected: "Scope".to_string(),
-                got: format!("{:?}", val),
-            }),
-        },
-        val => Err(error::ParsingError::ExtractionError {
-            what: "Function".to_string(),
-            reason: format!("Cannot register function named with {:?}", val),
-        }),
-    }
-}
-
-pub fn register_constant(
-    stack: &mut Vec<Stack>,
-    user_definitions: &mut HashMap<String, Vec<Stack>>,
-) -> Result<(), error::ParsingError> {
-    return match stack.pop().unwrap() {
-        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
-            Stack::Value(val) => {
-                user_definitions.insert(name, vec![Stack::Value(val)]);
-                Ok(())
-            }
-            val => Err(error::ParsingError::MismatchedTypes {
-                expected: "Value".to_string(),
-                got: format!("Expected Value, but got {:?}", val),
-            }),
-        },
-        val => Err(error::ParsingError::RegistrationError {
-            what: "Constant".to_string(),
-            reason: format!("Cannot register a constant named with {:?}", val),
-        }),
-    };
 }

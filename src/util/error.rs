@@ -23,3 +23,11 @@ pub enum RuntimeError {
     #[error("\tExpected {expected} but got {got}.")]
     MismatchedTypes { expected: String, got: String },
 }
+
+pub mod parsing {
+    pub type Result<T> = std::result::Result<T, super::ParsingError>;
+}
+
+pub mod runtime {
+    pub type Result<T> = std::result::Result<T, super::RuntimeError>;
+}

@@ -1,4 +1,3 @@
-use crate::ExecutionMode;
 use clap::*;
 use std::path::PathBuf;
 
@@ -8,6 +7,19 @@ use std::path::PathBuf;
 struct Cli {
     #[command(subcommand)]
     command: Command,
+}
+
+pub enum ExecutionMode {
+    Run {
+        path: PathBuf,
+    },
+    RunBinary {
+        path: PathBuf,
+    },
+    Build {
+        input_file: PathBuf,
+        output_file: Option<PathBuf>,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -35,7 +47,7 @@ enum Command {
     },
 }
 
-pub fn get_execution_mode() -> crate::ExecutionMode {
+pub fn get_execution_mode() -> ExecutionMode {
     let cli = Cli::parse();
 
     match cli.command {

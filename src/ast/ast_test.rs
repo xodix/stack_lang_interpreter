@@ -85,7 +85,7 @@ fn test_extract_string() {
     let mut stack = vec![Stack::Value(ValueType::Int(4))];
     let mut current_index = 0;
 
-    extract::value::string(r#""Hello""#, &mut stack, &mut current_index).unwrap();
+    extract::value::string(r#""Hello""#, &mut stack, &mut current_index, &mut 1, &mut 1).unwrap();
 
     assert_eq!(
         vec![
@@ -141,7 +141,7 @@ fn test_register_macro() {
 
     let mut user_definitions = HashMap::new();
 
-    extract::value::register_macro(&mut stack, &mut user_definitions).unwrap();
+    extract::operation::register_macro(&mut stack, &mut user_definitions).unwrap();
 
     assert!(user_definitions.contains_key(&"double".to_string()));
 
@@ -167,7 +167,7 @@ fn test_register_constant() {
 
     let mut user_definitions = HashMap::new();
 
-    extract::value::register_constant(&mut stack, &mut user_definitions).unwrap();
+    extract::operation::register_constant(&mut stack, &mut user_definitions).unwrap();
 
     assert!(user_definitions.contains_key(&"FIVE".to_string()));
 
