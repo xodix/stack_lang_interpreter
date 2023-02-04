@@ -5,7 +5,7 @@
 {
 	copy
 	{"fizz" print pop}
-	switch 3 switch %
+	switch 3 %
 	// if the remainder from dividing by 3 is 0
 	! if
 
@@ -13,7 +13,7 @@
 	{"buzz" print pop}
 
 	// if the remainder from dividing by 5 is 0
-	switch 5 switch %
+	switch 5 %
 	! if
 
 	copy
@@ -21,8 +21,8 @@
 	// if the remainder is not 0 for both 3 and 5
 	switch
 
-	copy 5 switch % switch
-	3 switch % 
+	copy 5 % switch
+	3 % 
 	&& if
 
 	"" println
