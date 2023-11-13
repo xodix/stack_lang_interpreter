@@ -1,15 +1,13 @@
 2
-println
 
 3
-println
 
 {
 	copy
 	reverse
 	+
-
-	println
 }
 
-10 for
+1000 for
+
+println

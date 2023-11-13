@@ -4,8 +4,8 @@ use crate::{util::*, Stack};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum ValueType {
-    Int(i32),
-    Float(f32),
+    Int(i64),
+    Float(f64),
     Text(String),
     Scope(Vec<Stack>),
     Bool(bool),
@@ -65,7 +65,7 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> error::parsin
     *i += index - 1;
 
     if is_float {
-        let res = num.parse::<f32>();
+        let res = num.parse::<f64>();
 
         match res {
             Ok(num) => Ok(stack.push(Stack::Value(ValueType::Float(num)))),
@@ -75,7 +75,7 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> error::parsin
             }),
         }
     } else {
-        let res = num.parse::<i32>();
+        let res = num.parse::<i64>();
 
         match res {
             Ok(num) => Ok(stack.push(Stack::Value(ValueType::Int(num)))),

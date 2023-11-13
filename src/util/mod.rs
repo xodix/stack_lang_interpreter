@@ -13,7 +13,9 @@ Macro returns the value of expression.
 #[macro_export]
 macro_rules! log_debug_time {
     ( $function:expr, $what:expr ) => {
-        if cfg!(debug_assertions) {
+        if
+        /*cfg!(debug_assertions)*/
+        true {
             use std::time::Instant;
 
             let now = Instant::now();

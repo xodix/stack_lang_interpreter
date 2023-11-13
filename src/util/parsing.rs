@@ -16,11 +16,13 @@ pub fn find_closing_bracket(src: &str) -> usize {
         }
     }
 
-    src.len()
+    src.len() + 1
 }
 
-pub fn looks_like_digit(src: &str) -> bool {
-    let ch = src.chars().next().unwrap();
+pub fn looks_like_number(src: &str) -> bool {
+    let mut chars = src.chars();
+    let ch1 = chars.next().unwrap();
+    let ch2 = chars.next().unwrap_or(' ');
 
-    ch.is_digit(10) || (ch == '-' && src.chars().next().unwrap_or(' ').is_digit(10))
+    ch1.is_digit(10) || ch1 == '-' && ch2.is_digit(10)
 }

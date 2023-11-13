@@ -16,7 +16,7 @@ pub enum Stack {
 fn main() {
     let execution_mode = cli::get_execution_mode();
 
-    let leftover_stack = match execution_mode {
+    let _leftover_stack = match execution_mode {
         Run { path } => {
             let mut stack = Vec::new();
 
@@ -55,7 +55,7 @@ fn main() {
     };
 
     #[cfg(debug_assertions)]
-    println!("{:?}", leftover_stack);
+    println!("{:?}", _leftover_stack);
 }
 
 fn parse(src: &str, stack: &mut Vec<Stack>, path: Option<PathBuf>) {

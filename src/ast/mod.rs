@@ -44,7 +44,7 @@ pub fn fill(
                 }
             }
 
-            _ if parsing::looks_like_digit(&src[i..]) => {
+            _ if parsing::looks_like_number(&src[i..]) => {
                 extract::value::number(&src[i..], stack, &mut i)?;
             }
 
