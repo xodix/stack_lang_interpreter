@@ -5,7 +5,7 @@ use crate::{ast::extract::operation::*, util::error, Stack, ValueType};
 use math::*;
 
 #[inline]
-fn check_argument_count(args: &[ValueType], needed: usize) -> Result<(), error::RuntimeError> {
+fn check_argument_count(args: &[ValueType], needed: usize) -> error::runtime::Result<()> {
     if args.len() < needed {
         Err(error::RuntimeError::InsufficientArguments {
             needed,
@@ -17,40 +17,37 @@ fn check_argument_count(args: &[ValueType], needed: usize) -> Result<(), error::
     }
 }
 
-// Inlined functions below could be a part of match statement in execute_operation.
-// However they are kept to give the project structure (every operation has a corresponding function).
-
 #[inline]
-pub fn add(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn add(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Add)
 }
 
 #[inline]
-pub fn mul(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn mul(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Mul)
 }
 
 #[inline]
-pub fn sub(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn sub(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Sub)
 }
 
 #[inline]
-pub fn div(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn div(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Div)
 }
 
 #[inline]
-pub fn pow(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn pow(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Pow)
 }
 
 #[inline]
-pub fn modulo(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn modulo(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_common_math(stack, OperationType::Mod)
 }
 
-pub fn print(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
+pub fn print(stack: &[ValueType]) -> error::runtime::Result<()> {
     check_argument_count(stack, 1)?;
 
     let value = &stack[stack.len() - 1];
@@ -59,7 +56,7 @@ pub fn print(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn println(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
+pub fn println(stack: &[ValueType]) -> error::runtime::Result<()> {
     check_argument_count(stack, 1)?;
 
     let value = &stack[stack.len() - 1];
@@ -68,7 +65,7 @@ pub fn println(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn print_debug(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
+pub fn print_debug(stack: &[ValueType]) -> error::runtime::Result<()> {
     check_argument_count(stack, 1)?;
 
     let value = &stack[stack.len() - 1];
@@ -77,7 +74,7 @@ pub fn print_debug(stack: &[ValueType]) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn print_debug_stack(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn print_debug_stack(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(stack, 1)?;
 
     println!("{:#?}", stack);
@@ -85,7 +82,7 @@ pub fn print_debug_stack(stack: &mut Vec<ValueType>) -> Result<(), error::Runtim
     Ok(())
 }
 
-pub fn if_statement(value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn if_statement(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(value_stack, 2)?;
 
     let condition = value_stack.pop().unwrap();
@@ -105,7 +102,7 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) -> Result<(), error::Runti
     }
 }
 
-pub fn for_loop(value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn for_loop(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(value_stack, 2)?;
 
     let condition = value_stack.pop().unwrap();
@@ -131,7 +128,7 @@ pub fn for_loop(value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeEr
     Ok(())
 }
 
-pub fn while_loop(value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn while_loop(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(value_stack, 2)?;
 
     let condition = value_stack.pop().unwrap();
@@ -141,6 +138,7 @@ pub fn while_loop(value_stack: &mut Vec<ValueType>) -> Result<(), error::Runtime
 
     if let ValueType::Scope(stack) = scope {
         while value_stack[value_stack.len() - 1].truthy() {
+            // The scope is copied for every iteration. NOT GOOD
             run(stack.clone(), value_stack)?;
         }
     }
@@ -149,31 +147,31 @@ pub fn while_loop(value_stack: &mut Vec<ValueType>) -> Result<(), error::Runtime
 }
 
 #[inline]
-pub fn lt(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn lt(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_comparison(stack, OperationType::Lt)
 }
 
 #[inline]
-pub fn gt(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn gt(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_comparison(stack, OperationType::Gt)
 }
 
 #[inline]
-pub fn eq(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn eq(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_comparison(stack, OperationType::Eq)
 }
 
 #[inline]
-pub fn leq(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn leq(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_comparison(stack, OperationType::Leq)
 }
 
 #[inline]
-pub fn geq(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn geq(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     execute_comparison(stack, OperationType::Geq)
 }
 
-pub fn or(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn or(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(stack, 2)?;
 
     let condition1 = stack.pop().unwrap();
@@ -189,7 +187,7 @@ pub fn or(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn and(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn and(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(stack, 2)?;
 
     let condition1 = stack.pop().unwrap();
@@ -205,7 +203,7 @@ pub fn and(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn not(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn not(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     check_argument_count(stack, 1)?;
 
     let condition = stack.pop().unwrap();
@@ -231,7 +229,7 @@ pub fn not(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn switch(stack: &mut [ValueType]) -> Result<(), error::RuntimeError> {
+pub fn switch(stack: &mut [ValueType]) -> error::runtime::Result<()> {
     check_argument_count(stack, 2)?;
     let length = stack.len();
 
@@ -240,19 +238,19 @@ pub fn switch(stack: &mut [ValueType]) -> Result<(), error::RuntimeError> {
     Ok(())
 }
 
-pub fn reverse(stack: &mut [ValueType]) -> Result<(), error::RuntimeError> {
+pub fn reverse(stack: &mut [ValueType]) -> error::runtime::Result<()> {
     stack.reverse();
 
     Ok(())
 }
 
-pub fn pop(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn pop(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     stack.pop();
 
     Ok(())
 }
 
-pub fn copy(stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn copy(stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     let last = stack[stack.len() - 1].clone();
 
     stack.push(last);

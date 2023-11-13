@@ -11,7 +11,7 @@ use std::fmt::Debug;
 use super::check_argument_count;
 
 #[inline]
-fn mismatched_args<T: Debug>(expected: &str, got: T) -> Result<(), error::RuntimeError> {
+fn mismatched_args<T: Debug>(expected: &str, got: T) -> error::runtime::Result<()> {
     Err(error::RuntimeError::MismatchedTypes {
         expected: expected.to_string(),
         got: format!("{:?}", got),
@@ -38,7 +38,7 @@ Checks for:
 pub fn execute_common_math(
     stack: &mut Vec<ValueType>,
     operation: OperationType,
-) -> Result<(), error::RuntimeError> {
+) -> error::runtime::Result<()> {
     check_argument_count(stack, 2)?;
 
     let arg2 = stack.pop().unwrap();
@@ -76,11 +76,7 @@ pub fn execute_common_math(
     }
 }
 
-fn calculate_operation<T>(
-    operation: OperationType,
-    num1: T,
-    num2: T,
-) -> Result<T, error::RuntimeError>
+fn calculate_operation<T>(operation: OperationType, num1: T, num2: T) -> error::runtime::Result<T>
 where
     T: Num,
 {
@@ -97,7 +93,7 @@ where
 pub fn execute_comparison(
     stack: &mut Vec<ValueType>,
     operation: OperationType,
-) -> Result<(), error::RuntimeError> {
+) -> error::runtime::Result<()> {
     check_argument_count(stack, 2)?;
 
     let arg1 = stack.pop().unwrap();
@@ -129,7 +125,7 @@ fn compare_operation<T: std::cmp::PartialOrd>(
     operation: OperationType,
     num1: T,
     num2: T,
-) -> Result<bool, error::RuntimeError> {
+) -> error::runtime::Result<bool> {
     match operation {
         OperationType::Lt => Ok(num1 < num2),
         OperationType::Gt => Ok(num1 > num2),

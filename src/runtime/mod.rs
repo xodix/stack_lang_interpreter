@@ -13,7 +13,7 @@ use crate::{
     Stack,
 };
 
-pub fn run(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) -> Result<(), error::RuntimeError> {
+pub fn run(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()> {
     for element in stack.into_iter() {
         match element {
             Stack::Operation(operation) => execute_operation(value_stack, operation)?,
@@ -27,7 +27,7 @@ pub fn run(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) -> Result<(), er
 fn execute_operation(
     stack: &mut Vec<ValueType>,
     operation: OperationType,
-) -> Result<(), error::RuntimeError> {
+) -> error::runtime::Result<()> {
     match operation {
         Add => add(stack),
         Sub => sub(stack),

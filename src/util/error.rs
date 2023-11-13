@@ -14,6 +14,7 @@ pub enum ParsingError {
 pub enum RuntimeError {
     #[error("\tInvalid operation `{operation:?}`.")]
     InvalidOperation { operation: crate::OperationType },
+    // TODO one argument not one arguments
     #[error("\tExpected {needed} arguments got {got}.\n\tArguments: {value_stack:?}")]
     InsufficientArguments {
         needed: usize,
@@ -22,4 +23,12 @@ pub enum RuntimeError {
     },
     #[error("\tExpected {expected} but got {got}.")]
     MismatchedTypes { expected: String, got: String },
+}
+
+pub mod parsing {
+    pub type Result<T> = std::result::Result<T, super::ParsingError>;
+}
+
+pub mod runtime {
+    pub type Result<T> = std::result::Result<T, super::RuntimeError>;
 }

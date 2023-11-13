@@ -1,10 +1,9 @@
 #[cfg(test)]
 mod ast_test;
+mod comments;
 pub mod extract;
 
-mod comments;
-
-use crate::{util::error, Stack};
+use crate::{util::*, Stack};
 pub use extract::{operation::OperationType, value::ValueType};
 use std::collections::HashMap;
 
@@ -14,7 +13,7 @@ pub fn fill(
     line_height: &mut usize,
     line_width: &mut usize,
     user_definitions: &mut HashMap<String, Vec<Stack>>,
-) -> Result<(), error::ParsingError> {
+) -> error::parsing::Result<()> {
     let chars: Vec<char> = src.chars().collect();
     let mut i = 0;
 
@@ -34,7 +33,7 @@ pub fn fill(
             '/' => {
                 if i + 1 < chars.len() {
                     if chars[i + 1] == '*' {
-                        comments::skip_multiline(&src[i..], &mut i);
+                        comments::skip_multiline(&src[i..], &mut i, line_height, line_width);
                     } else if chars[i + 1] == '/' {
                         comments::skip_singleline(&src[i..], &mut i);
                     } else {
@@ -45,13 +44,13 @@ pub fn fill(
                 }
             }
 
-            _ if ch.is_digit(10)
-                || (ch == '-' && src.chars().nth(i + 1).unwrap_or(' ').is_digit(10)) =>
-            {
+            _ if parsing::looks_like_number(&src[i..]) => {
                 extract::value::number(&src[i..], stack, &mut i)?;
             }
 
-            '\'' | '\"' => extract::value::string(&src[i..], stack, &mut i)?,
+            '\'' | '\"' => {
+                extract::value::string(&src[i..], stack, &mut i, line_height, line_width)?
+            }
 
             '{' => stack.push(Stack::Value(ValueType::Scope(extract::value::scope(
                 &src[i..],

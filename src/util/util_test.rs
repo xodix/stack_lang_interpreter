@@ -1,4 +1,4 @@
-use crate::{log_debug_time, util::find_closing_bracket};
+use crate::{log_debug_time, util::parsing::find_closing_bracket};
 
 #[test]
 fn test_log_debug_macro() {

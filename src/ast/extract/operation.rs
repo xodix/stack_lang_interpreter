@@ -1,42 +1,7 @@
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
-use super::value::{register_constant, register_macro};
 use crate::{util::error, Stack, ValueType};
-
-pub const ADD: &str = "+";
-pub const SUB: &str = "-";
-pub const MUL: &str = "*";
-pub const DIV: &str = "/";
-pub const MOD: &str = "%";
-pub const POW: &str = "^";
-
-pub const LT: &str = "<";
-pub const GT: &str = ">";
-pub const EQ: &str = "==";
-pub const LEQ: &str = "<=";
-pub const GEQ: &str = ">=";
-
-pub const OR: &str = "||";
-pub const AND: &str = "&&";
-pub const NOT: &str = "!";
-
-pub const IF: &str = "if";
-pub const FOR: &str = "for";
-pub const WHILE: &str = "while";
-
-pub const PRINT: &str = "print";
-pub const PRINTLN: &str = "println";
-pub const PRINT_DEBUG: &str = "print_debug";
-pub const PRINT_DEBUG_STACK: &str = "print_debug_stack";
-
-pub const SWITCH: &str = "switch";
-pub const REVERSE: &str = "reverse";
-pub const POP: &str = "pop";
-pub const COPY: &str = "copy";
-
-pub const MACRO: &str = "macro";
-pub const CONST: &str = "const";
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum OperationType {
@@ -71,33 +36,39 @@ pub enum OperationType {
 
 lazy_static! {
     static ref OPERANDS: HashMap<&'static str, OperationType> = HashMap::from([
-        (ADD, OperationType::Add),
-        (SUB, OperationType::Sub),
-        (MUL, OperationType::Mul),
-        (DIV, OperationType::Div),
-        (MOD, OperationType::Mod),
-        (POW, OperationType::Pow),
-        (PRINT, OperationType::Print),
-        (PRINT_DEBUG, OperationType::PrintDebug),
-        (PRINT_DEBUG_STACK, OperationType::PrintDebugStack),
-        (IF, OperationType::If),
-        (LT, OperationType::Lt),
-        (GT, OperationType::Gt),
-        (EQ, OperationType::Eq),
-        (LEQ, OperationType::Leq),
-        (GEQ, OperationType::Geq),
-        (OR, OperationType::Or),
-        (AND, OperationType::And),
-        (FOR, OperationType::For),
-        (WHILE, OperationType::While),
-        (SWITCH, OperationType::Switch),
-        (REVERSE, OperationType::Reverse),
-        (POP, OperationType::Pop),
-        (NOT, OperationType::Not),
-        (COPY, OperationType::Copy),
-        (PRINTLN, OperationType::Println),
-        (MACRO, OperationType::Macro),
-        (CONST, OperationType::Const),
+        // arithmetic
+        ("+", OperationType::Add),
+        ("-", OperationType::Sub),
+        ("*", OperationType::Mul),
+        ("/", OperationType::Div),
+        ("%", OperationType::Mod),
+        ("^", OperationType::Pow),
+        // control flow
+        ("if", OperationType::If),
+        ("for", OperationType::For),
+        ("while", OperationType::While),
+        // conditions
+        ("<", OperationType::Lt),
+        (">", OperationType::Gt),
+        ("==", OperationType::Eq),
+        ("<=", OperationType::Leq),
+        (">=", OperationType::Geq),
+        ("||", OperationType::Or),
+        ("&&", OperationType::And),
+        ("!", OperationType::Not),
+        // console
+        ("print", OperationType::Print),
+        ("println", OperationType::Println),
+        ("print_debug", OperationType::PrintDebug),
+        ("print_debug_stack", OperationType::PrintDebugStack),
+        // stack
+        ("switch", OperationType::Switch),
+        ("reverse", OperationType::Reverse),
+        ("pop", OperationType::Pop),
+        ("copy", OperationType::Copy),
+        // register
+        ("macro", OperationType::Macro),
+        ("const", OperationType::Const),
     ]);
     static ref KEYWORDS: HashMap<&'static str, ValueType> = HashMap::from([
         ("true", ValueType::Bool(true)),
@@ -110,12 +81,12 @@ pub fn keyword(
     stack: &mut Vec<Stack>,
     i: &mut usize,
     user_definitions: &mut crate::HashMap<String, Vec<Stack>>,
-) -> Result<(), error::ParsingError> {
-    let presumable_operand_index = src
-        .find(|c| c == ' ' || c == '\n' || c == '\r')
+) -> error::parsing::Result<()> {
+    let presumable_keyword_index = src
+        .find(|c| c == ' ' || c == '\r' || c == '\n')
         .unwrap_or(src.len());
-    *i += presumable_operand_index - 1;
-    let presumable_keyword = &src[..presumable_operand_index];
+    *i += presumable_keyword_index - 1;
+    let presumable_keyword = &src[..presumable_keyword_index];
 
     if let Some(operation_type) = OPERANDS.get(&presumable_keyword) {
         if *operation_type == OperationType::Macro {
@@ -136,4 +107,62 @@ pub fn keyword(
     }
 
     Ok(())
+}
+
+pub fn register_macro(
+    stack: &mut Vec<Stack>,
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
+) -> error::parsing::Result<()> {
+    if stack.len() < 2 {
+        return Err(error::ParsingError::RegistrationError {
+            what: "Macro".to_string(),
+            reason: "Not enough arguments.".to_string(),
+        });
+    }
+
+    match stack.pop().unwrap() {
+        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
+            Stack::Value(ValueType::Scope(contents)) => {
+                user_definitions.insert(name, contents);
+                Ok(())
+            }
+            val => Err(error::ParsingError::MismatchedTypes {
+                expected: "Scope".to_string(),
+                got: format!("{:?}", val),
+            }),
+        },
+        val => Err(error::ParsingError::ExtractionError {
+            what: "Function".to_string(),
+            reason: format!("Cannot register function named with {:?}", val),
+        }),
+    }
+}
+
+pub fn register_constant(
+    stack: &mut Vec<Stack>,
+    user_definitions: &mut HashMap<String, Vec<Stack>>,
+) -> error::parsing::Result<()> {
+    if stack.len() < 2 {
+        return Err(error::ParsingError::RegistrationError {
+            what: "Constant".to_string(),
+            reason: "Not enough arguments.".to_string(),
+        });
+    }
+
+    return match stack.pop().unwrap() {
+        Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
+            Stack::Value(val) => {
+                user_definitions.insert(name, vec![Stack::Value(val)]);
+                Ok(())
+            }
+            val => Err(error::ParsingError::MismatchedTypes {
+                expected: "Value".to_string(),
+                got: format!("Expected Value, but got {:?}", val),
+            }),
+        },
+        val => Err(error::ParsingError::RegistrationError {
+            what: "Constant".to_string(),
+            reason: format!("Cannot register a constant named with {:?}", val),
+        }),
+    };
 }
