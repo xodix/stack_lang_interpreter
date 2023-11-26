@@ -7,6 +7,8 @@ use ast::*;
 use std::{collections::HashMap, path::PathBuf};
 use util::{cli::ExecutionMode::*, *};
 
+const DEFAULT_STACK_SIZE: usize = 128;
+
 #[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Stack {
     Value(ValueType),
@@ -18,7 +20,7 @@ fn main() {
 
     let _leftover_stack = match execution_mode {
         Run { path } => {
-            let mut stack = Vec::new();
+            let mut stack = Vec::with_capacity(DEFAULT_STACK_SIZE);
 
             let src = file::extract_text(&path);
             parse(&src, &mut stack, Some(path));
@@ -27,8 +29,10 @@ fn main() {
         }
         RunBinary { path } => {
             let src = file::extract_bin(&path);
-            let bin: file::Binary =
-                postcard::from_bytes(&src).expect("Binary file format is not valid.");
+            let bin: file::Binary = log_debug_time!(
+                postcard::from_bytes(&src).expect("Binary file format is not valid."),
+                "Building from binary."
+            );
 
             execute(bin.stack)
         }
@@ -36,7 +40,7 @@ fn main() {
             input_file,
             output_file,
         } => {
-            let mut stack = Vec::new();
+            let mut stack = Vec::with_capacity(DEFAULT_STACK_SIZE);
 
             let src = file::extract_text(&input_file);
             parse(&src, &mut stack, Some(input_file));
@@ -59,7 +63,7 @@ fn main() {
 }
 
 fn parse(src: &str, stack: &mut Vec<Stack>, path: Option<PathBuf>) {
-    let mut user_definitions = HashMap::new();
+    let mut user_definitions = HashMap::with_capacity(DEFAULT_STACK_SIZE);
 
     let mut line_width = 1;
     let mut line_height = 1;
@@ -87,7 +91,7 @@ fn parse(src: &str, stack: &mut Vec<Stack>, path: Option<PathBuf>) {
 }
 
 fn execute(stack: Vec<Stack>) -> Vec<ValueType> {
-    let mut value_stack: Vec<ValueType> = Vec::new();
+    let mut value_stack: Vec<ValueType> = Vec::with_capacity(DEFAULT_STACK_SIZE);
 
     if let Err(err) = log_debug_time!(runtime::run(stack, &mut value_stack), "Executing from ast") {
         const RED: &str = "\x1b[91m";
