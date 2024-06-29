@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use crate::{util::error, Stack, ValueType};
 
-#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum OperationType {
     Add,
     Sub,
@@ -35,6 +35,8 @@ pub enum OperationType {
 }
 
 lazy_static! {
+    // TODO
+    // ! This sucks! It is probably created every fucking usage. It is not static and will cause me precious µs (more probably ns)
     static ref OPERANDS: HashMap<&'static str, OperationType> = HashMap::from([
         // arithmetic
         ("+", OperationType::Add),
@@ -94,11 +96,12 @@ pub fn keyword(
         } else if *operation_type == OperationType::Const {
             register_constant(stack, user_definitions)?;
         } else {
-            stack.push(Stack::Operation(operation_type.clone()));
+            stack.push(Stack::Operation(*operation_type));
         }
     } else if let Some(function) = user_definitions.get(&presumable_keyword.to_string()) {
         stack.extend_from_slice(function);
     } else if let Some(value) = KEYWORDS.get(&presumable_keyword) {
+        // I have to copy here because. The keyword is a heap allocated variable that I'm putting on a stack.
         stack.push(Stack::Value(value.clone()));
     } else if !presumable_keyword.is_empty() {
         return Err(error::ParsingError::KeywordError {
@@ -149,7 +152,7 @@ pub fn register_constant(
         });
     }
 
-    return match stack.pop().unwrap() {
+    match stack.pop().unwrap() {
         Stack::Value(ValueType::Text(name)) => match stack.pop().unwrap() {
             Stack::Value(val) => {
                 user_definitions.insert(name, vec![Stack::Value(val)]);
@@ -164,5 +167,5 @@ pub fn register_constant(
             what: "Constant".to_string(),
             reason: format!("Cannot register a constant named with {:?}", val),
         }),
-    };
+    }
 }
