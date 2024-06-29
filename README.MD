@@ -15,10 +15,9 @@ Creating your programming language helps with rapidly learning others.
 1. QoL improvements. ✅
 2. Optimization. ✅
 3. Compiling to custom binary format. ✅
-4. Optimization during compilation (middleware). ⏳
-5. Interpreter compilation to WASM. ⏳⏳
-6. Interactive demo website. ⏳⏳
-7. LLVM compilation: ⏳⏳⏳ (Approximately never)
+4. Interpreter compilation to WASM. ⏳
+5. Interactive demo website. ⏳⏳
+6. LLVM compilation: ⏳⏳
    - Syntax analysis.
    - Optimization.
 
