@@ -49,7 +49,7 @@ pub fn number(src: &str, stack: &mut Vec<Stack>, i: &mut usize) -> error::parsin
     let mut is_float = false;
 
     for ch in src.chars() {
-        if ch != '-' && ch != '_' && !ch.is_digit(10) && ch != '.' {
+        if ch != '-' && ch != '_' && !ch.is_ascii_digit() && ch != '.' {
             break;
         }
         index += 1;

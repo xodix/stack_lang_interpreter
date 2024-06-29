@@ -15,7 +15,7 @@ pub enum RuntimeError {
     #[error("\tInvalid operation `{operation:?}`.")]
     InvalidOperation { operation: crate::OperationType },
     // TODO one argument not one arguments
-    #[error("\tExpected {needed} arguments got {got}.\n\tArguments: {value_stack:?}")]
+    #[error("\tExpected {needed} argument(s) got {got}.\n\tArguments: {value_stack:?}")]
     InsufficientArguments {
         needed: usize,
         got: usize,

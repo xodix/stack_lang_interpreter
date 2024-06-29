@@ -21,7 +21,7 @@
 			},
 			"args": [
 				"run",
-				"test.sl"
+				"main.sl"
 			],
 			"cwd": "${workspaceFolder}"
 		},
@@ -41,7 +41,10 @@
 					"kind": "bin"
 				}
 			},
-			"args": [],
+			"args": [
+				"run",
+				"main.sl"
+			],
 			"cwd": "${workspaceFolder}"
 		}
 	]

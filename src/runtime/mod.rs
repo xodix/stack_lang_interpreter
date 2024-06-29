@@ -17,6 +17,7 @@ pub fn run(stack: Vec<Stack>, value_stack: &mut Vec<ValueType>) -> error::runtim
     for element in stack.into_iter() {
         match element {
             Stack::Operation(operation) => execute_operation(value_stack, operation)?,
+            // TODO
             Stack::Value(value) => value_stack.push(value),
         }
     }

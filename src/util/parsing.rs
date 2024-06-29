@@ -21,8 +21,8 @@ pub fn find_closing_bracket(src: &str) -> usize {
 
 pub fn looks_like_number(src: &str) -> bool {
     let mut chars = src.chars();
-    let ch1 = chars.next().unwrap();
+    let ch1 = chars.next().unwrap_or(' ');
     let ch2 = chars.next().unwrap_or(' ');
 
-    ch1.is_digit(10) || ch1 == '-' && ch2.is_digit(10)
+    ch1.is_ascii_digit() || ch1 == '-' && ch2.is_ascii_digit()
 }

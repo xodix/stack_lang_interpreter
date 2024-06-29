@@ -90,7 +90,7 @@ pub fn if_statement(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<
 
     if condition.truthy() {
         if let ValueType::Scope(stack) = scope {
-            run(stack, value_stack)
+            run(stack.clone(), value_stack)
         } else {
             Err(error::RuntimeError::MismatchedTypes {
                 expected: "Scope".to_string(),
@@ -112,7 +112,8 @@ pub fn for_loop(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()> 
         ValueType::Int(range) => {
             if let ValueType::Scope(stack) = scope {
                 for _ in 0..range {
-                    // The scope is copied for every iteration. NOT GOOD
+                    // ! The scope is copied for every iteration. NOT GOOD
+                    //TODO
                     run(stack.clone(), value_stack)?;
                 }
             }
@@ -138,7 +139,8 @@ pub fn while_loop(value_stack: &mut Vec<ValueType>) -> error::runtime::Result<()
 
     if let ValueType::Scope(stack) = scope {
         while value_stack[value_stack.len() - 1].truthy() {
-            // The scope is copied for every iteration. NOT GOOD
+            // ! The scope is copied for every iteration. NOT GOOD
+            // TODO
             run(stack.clone(), value_stack)?;
         }
     }
