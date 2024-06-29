@@ -8,6 +8,6 @@
 	+
 }
 
-1000 for
+50 for
 
 println
