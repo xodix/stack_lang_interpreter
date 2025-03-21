@@ -43,16 +43,34 @@ git clone "https://github.com/xodix/stack_lang_compiler.git"
 
 cd stack_lang_compiler
 ```
-Next compile
+
+Next compile:
+
+WINDOWS
+```sh
+cargo build --release
+cp .\target\release\stack_lang_compiler.exe .
+
+Running source code: .\stack_lang.exe run <PATH>
+Running binary file: .\stack_lang.exe run --bin <PATH>
+
+Building source code: .\stack_lang.exe build <PATH>
+```
+
+LINUX
+```sh
+cargo build --release
+cp ./target/release/stack_lang_compiler .
+
+Running source code: ./stack_lang run <PATH>
+Running binary file: ./stack_lang run --bin <PATH>
+
+Building source code: ./stack_lang build <PATH>
+```
 
 ## Command usage
 
 ```
-Running source code: stack_lang.exe run <PATH>
-Running binary file: stack_lang.exe run --bin <PATH>
-
-Building source code: stack_lang.exe build <PATH>
-
 Usage: stack_lang.exe <COMMAND>
 
 Commands:
