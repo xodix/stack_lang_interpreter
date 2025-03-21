@@ -41,12 +41,18 @@ Firstly clone and enter the repository from the console:
 ```sh
 git clone "https://github.com/xodix/stack_lang_compiler.git"
 
-cd stack_lang_compile
+cd stack_lang_compiler
 ```
+Next compile
 
 ## Command usage
 
 ```
+Running source code: stack_lang.exe run <PATH>
+Running binary file: stack_lang.exe run --bin <PATH>
+
+Building source code: stack_lang.exe build <PATH>
+
 Usage: stack_lang.exe <COMMAND>
 
 Commands:
@@ -56,11 +62,6 @@ Commands:
 
 Options:
   -h, --help  Print help information
-
-Running source code: stack_lang.exe run <PATH>
-Running binary file: stack_lang.exe run --bin <PATH>
-
-Building source code: stack_lang.exe build <PATH>
 ```
 
 # Syntax with examples:
